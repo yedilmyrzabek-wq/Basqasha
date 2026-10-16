@@ -1,0 +1,471 @@
+{
+ "composition": "ExplainerShort",
+ "width": 1080,
+ "height": 1920,
+ "fps": 30,
+ "duration_frames": 776,
+ "language": "kk",
+ "voice": {
+  "src": "reference/costco_project_example/public/pop/voice.mp3",
+  "volume": 1.0
+ },
+ "music": {
+  "src": "library/sfx/music/pad.wav",
+  "volume": 0.18
+ },
+ "progress_bar": true,
+ "sponsor_badge": null,
+ "scenes": [
+  {
+   "id": 1,
+   "from": 0,
+   "duration": 93,
+   "background": {
+    "src": "library/style/samples/counter.jpg",
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.75,
+     0.55
+    ],
+    "punch": [
+     45
+    ]
+   },
+   "character": {
+    "x": 300,
+    "y": 880,
+    "height": 470,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "shock",
+      "src": "library/poses/pose_shock.png",
+      "width": 188,
+      "height": 320
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "text": "НЕГЕ СОНША ҚЫМБАТ?",
+     "x": 600,
+     "y": 300,
+     "at": 8
+    },
+    {
+     "type": "arrow",
+     "x": 980,
+     "y": 380,
+     "x2": 1380,
+     "y2": 540,
+     "color": "red",
+     "at": 30
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "from": 93,
+   "duration": 84,
+   "background": {
+    "src": "library/style/samples/ticket.jpg",
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.65,
+     0.4
+    ],
+    "punch": [
+     20
+    ]
+   },
+   "character": {
+    "x": 230,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "shrug",
+      "src": "library/poses/pose_shrug.png",
+      "width": 300,
+      "height": 320
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "text": "БИЛЕТ ШЕ?",
+     "x": 640,
+     "y": 250,
+     "at": 6
+    },
+    {
+     "type": "label",
+     "text": "пайдасы аз",
+     "x": 640,
+     "y": 390,
+     "color": "red",
+     "at": 30
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "from": 177,
+   "duration": 201,
+   "background": {
+    "src": "library/style/samples/studio.jpg",
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.8,
+     0.7
+    ],
+    "punch": [
+     60
+    ]
+   },
+   "character": {
+    "x": 270,
+    "y": 930,
+    "height": 430,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "think",
+      "src": "library/poses/pose_think.png",
+      "width": 184,
+      "height": 320
+     },
+     {
+      "at": 52,
+      "pose": "point",
+      "src": "library/poses/pose_point.png",
+      "width": 269,
+      "height": 320
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "value": 48,
+     "prefix": "≈",
+     "suffix": "%",
+     "text": "әр билет долларынан",
+     "x": 600,
+     "y": 300,
+     "color": "red",
+     "at": 30
+    },
+    {
+     "type": "coins",
+     "x": 420,
+     "y": 720,
+     "x2": 1630,
+     "y2": 860,
+     "count": 6,
+     "at": 70
+    },
+    {
+     "type": "note",
+     "text": "AMC 2025: фильм шығыны $1,28 млрд / $2,65 млрд",
+     "x": 600,
+     "y": 490,
+     "at": 120
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "from": 378,
+   "duration": 204,
+   "background": {
+    "src": "library/style/samples/kernels.jpg",
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.5,
+     0.6
+    ],
+    "punch": [
+     105
+    ]
+   },
+   "character": {
+    "x": 250,
+    "y": 770,
+    "height": 380,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "think",
+      "src": "library/poses/pose_think.png",
+      "width": 184,
+      "height": 320
+     },
+     {
+      "at": 60,
+      "pose": "coin",
+      "src": "library/poses/pose_coin.png",
+      "width": 191,
+      "height": 318
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "text": "ПОПКОРН МЕН СУСЫН?",
+     "x": 640,
+     "y": 250,
+     "at": 4
+    },
+    {
+     "type": "label",
+     "text": "~20 цент шығын",
+     "x": 600,
+     "y": 480,
+     "color": "green",
+     "at": 90
+    },
+    {
+     "type": "arrow",
+     "x": 1090,
+     "y": 410,
+     "x2": 1270,
+     "y2": 215,
+     "at": 112
+    },
+    {
+     "type": "label",
+     "text": "$1 сатылым",
+     "x": 1490,
+     "y": 150,
+     "color": "red",
+     "at": 125
+    },
+    {
+     "type": "note",
+     "text": "AMC 2025: $327 млн шығын / $1,67 млрд сатылым",
+     "at": 150
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "from": 582,
+   "duration": 194,
+   "background": {
+    "src": "library/style/samples/marquee.jpg",
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.7,
+     0.45
+    ],
+    "punch": [
+     81
+    ]
+   },
+   "character": {
+    "x": 330,
+    "y": 940,
+    "height": 470,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "present",
+      "src": "library/poses/pose_present.png",
+      "width": 259,
+      "height": 318
+     },
+     {
+      "at": 81,
+      "pose": "popcorn",
+      "src": "library/poses/pose_popcorn.png",
+      "width": 245,
+      "height": 318
+     },
+     {
+      "at": 135,
+      "pose": "excited",
+      "src": "library/poses/pose_excited.png",
+      "width": 293,
+      "height": 318
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "stamp",
+     "text": "попкорн сатады",
+     "x": 1400,
+     "y": 560,
+     "color": "red",
+     "at": 81
+    },
+    {
+     "type": "label",
+     "text": "ФИЛЬМ — ЖАРНАМА",
+     "x": 620,
+     "y": 330,
+     "color": "red",
+     "at": 135
+    }
+   ]
+  }
+ ],
+ "captions": [
+  {
+   "from": 0,
+   "to": 87,
+   "text": "Кинотеатрда попкорн неге сонша қымбат?",
+   "keyword": "попкорн"
+  },
+  {
+   "from": 96,
+   "to": 168,
+   "text": "Өйткені билеттен түсетін пайда аз.",
+   "keyword": "пайда"
+  },
+  {
+   "from": 180,
+   "to": 264,
+   "text": "2025 жылы AMC әр билет долларының",
+   "keyword": "доллар"
+  },
+  {
+   "from": 264,
+   "to": 369,
+   "text": "жартысын студияларға төлеген.",
+   "keyword": "жарты"
+  },
+  {
+   "from": 381,
+   "to": 435,
+   "text": "Ал попкорн мен сусын ше?",
+   "keyword": "попкорн"
+  },
+  {
+   "from": 441,
+   "to": 576,
+   "text": "Әр сатылған долларға небәрі 20 цент шығын.",
+   "keyword": "20"
+  },
+  {
+   "from": 588,
+   "to": 657,
+   "text": "Яғни кинотеатр шын мәнінде кино сатпайды.",
+   "keyword": "сатпай"
+  },
+  {
+   "from": 663,
+   "to": 714,
+   "text": "Ол попкорн сатады…",
+   "keyword": "попкорн"
+  },
+  {
+   "from": 717,
+   "to": 776,
+   "text": "…ал фильм — жай ғана жарнама.",
+   "keyword": "жарнама"
+  }
+ ],
+ "sfx": [
+  {
+   "src": "library/sfx/pop.wav",
+   "from": 8,
+   "volume": 0.8
+  },
+  {
+   "src": "library/sfx/whoosh.wav",
+   "from": 90,
+   "volume": 0.7
+  },
+  {
+   "src": "library/sfx/pop.wav",
+   "from": 99,
+   "volume": 0.6
+  },
+  {
+   "src": "library/sfx/pop.wav",
+   "from": 123,
+   "volume": 0.5
+  },
+  {
+   "src": "library/sfx/whoosh.wav",
+   "from": 174,
+   "volume": 0.7
+  },
+  {
+   "src": "library/sfx/ding.wav",
+   "from": 207,
+   "volume": 0.6
+  },
+  {
+   "src": "library/sfx/coin.wav",
+   "from": 247,
+   "volume": 0.5
+  },
+  {
+   "src": "library/sfx/coin.wav",
+   "from": 255,
+   "volume": 0.5
+  },
+  {
+   "src": "library/sfx/coin.wav",
+   "from": 263,
+   "volume": 0.5
+  },
+  {
+   "src": "library/sfx/coin.wav",
+   "from": 271,
+   "volume": 0.5
+  },
+  {
+   "src": "library/sfx/whoosh.wav",
+   "from": 375,
+   "volume": 0.7
+  },
+  {
+   "src": "library/sfx/pop.wav",
+   "from": 382,
+   "volume": 0.6
+  },
+  {
+   "src": "library/sfx/pop.wav",
+   "from": 468,
+   "volume": 0.6
+  },
+  {
+   "src": "library/sfx/pop.wav",
+   "from": 507,
+   "volume": 0.6
+  },
+  {
+   "src": "library/sfx/whoosh.wav",
+   "from": 579,
+   "volume": 0.7
+  },
+  {
+   "src": "library/sfx/kaching.wav",
+   "from": 663,
+   "volume": 0.7
+  },
+  {
+   "src": "library/sfx/pop.wav",
+   "from": 717,
+   "volume": 0.8
+  }
+ ]
+}

@@ -1,0 +1,84 @@
+{
+ "poses": [
+  {
+   "name": "coin",
+   "file": "pose_coin.png",
+   "tags": [
+    "money",
+    "price"
+   ],
+   "width": 191,
+   "height": 318
+  },
+  {
+   "name": "excited",
+   "file": "pose_excited.png",
+   "tags": [
+    "happy",
+    "payoff"
+   ],
+   "width": 293,
+   "height": 318
+  },
+  {
+   "name": "point",
+   "file": "pose_point.png",
+   "tags": [
+    "explain",
+    "direct"
+   ],
+   "width": 269,
+   "height": 320
+  },
+  {
+   "name": "popcorn",
+   "file": "pose_popcorn.png",
+   "tags": [
+    "food",
+    "prop"
+   ],
+   "width": 245,
+   "height": 318
+  },
+  {
+   "name": "present",
+   "file": "pose_present.png",
+   "tags": [
+    "show",
+    "intro"
+   ],
+   "width": 259,
+   "height": 318
+  },
+  {
+   "name": "shock",
+   "file": "pose_shock.png",
+   "tags": [
+    "surprise",
+    "hook"
+   ],
+   "width": 188,
+   "height": 320
+  },
+  {
+   "name": "shrug",
+   "file": "pose_shrug.png",
+   "tags": [
+    "doubt",
+    "unknown"
+   ],
+   "width": 300,
+   "height": 320
+  },
+  {
+   "name": "think",
+   "file": "pose_think.png",
+   "tags": [
+    "question",
+    "curious"
+   ],
+   "width": 184,
+   "height": 320
+  }
+ ]
+}

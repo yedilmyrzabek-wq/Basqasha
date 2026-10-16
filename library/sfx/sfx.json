@@ -1,0 +1,13 @@
+{
+ "placeholder": true,
+ "sfx": [
+  {"name": "whoosh", "file": "whoosh.wav", "use": "background change / scene cut"},
+  {"name": "pop", "file": "pop.wav", "use": "label or stamp appears"},
+  {"name": "coin", "file": "coin.wav", "use": "coins / money"},
+  {"name": "ding", "file": "ding.wav", "use": "number / fact reveal"},
+  {"name": "kaching", "file": "kaching.wav", "use": "price / profit punchline"}
+ ],
+ "music": [
+  {"name": "pad", "file": "music/pad.wav", "use": "quiet bed under voice"}
+ ]
+}
