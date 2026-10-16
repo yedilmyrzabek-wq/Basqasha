@@ -2,6 +2,7 @@
 the DB cost ledger and the operator settings (models, writer, wpm, similarity threshold)."""
 from __future__ import annotations
 
+import inspect
 import uuid
 from typing import Any, Mapping
 
@@ -23,8 +24,10 @@ def build(project_id: uuid.UUID | None = None):
     settings = get_settings().model_copy(update={
         "model_text": m["text"], "model_script": m["script"], "model_cheap": m["cheap"],
         "model_image": m["image"], "model_embed": m["embed"]})
-    return build_ai(ledger, settings, wpm=wpm, script_writer=cfg["script_writer"],
-                    similarity_threshold=float(cfg["similarity_threshold"]))
+    kw: dict[str, Any] = {}
+    if "similarity_threshold" in inspect.signature(build_ai).parameters:
+        kw["similarity_threshold"] = float(cfg["similarity_threshold"])
+    return build_ai(ledger, settings, wpm=wpm, script_writer=cfg["script_writer"], **kw)
 
 
 def generate_idea(project_id: uuid.UUID, transcript: str, *, language: str, source_title: str | None,

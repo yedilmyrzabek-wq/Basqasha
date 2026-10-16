@@ -50,7 +50,16 @@ def run(project_id: uuid.UUID) -> StepResult:
                         target_words=ctx.target_words, avoid_hook_types=hooks, avoid_structures=structures)
     cctx = CallContext(project_id, "script")
     ai = ai_bridge.build(project_id)
-    doc = dict(ai.writer.write(req, cctx))
+
+    draft = _unchecked_draft(project_id)
+    if draft is not None:  # a previous attempt paid for the draft but failed in the originality phase
+        script_id, doc = draft
+        with session_scope() as db:
+            job_log(db, project_id, "script", "Reusing the unchecked draft from the previous attempt")
+    else:
+        doc = dict(ai.writer.write(req, cctx))
+        script_id = _save_version(project_id, doc)
+
     # check -> auto-rewrite flagged sentences (max 2 rounds) -> re-check; the reference is passed
     # explicitly and never reaches the writer
     script, report = ai.originality(doc, originality_feed.load_reference(project_id), cctx)
@@ -59,19 +68,41 @@ def run(project_id: uuid.UUID) -> StepResult:
     text = doc["text"]
     wc = count_words(text)
     with session_scope() as db:
-        version = (db.scalar(select(func.max(Script.version)).where(Script.project_id == project_id)) or 0) + 1
-        db.execute(update(Script).where(Script.project_id == project_id, Script.approved).values(approved=False))
-        s = Script(project_id=project_id, version=version, llm_draft=text, text=text, data=doc,
-                   word_count=wc, approved=False)
-        db.add(s)
-        db.flush()
+        s = db.get(Script, script_id)
+        s.llm_draft = s.text = text
+        s.data, s.word_count = doc, wc
         save_report(db, s.id, report)
         folder = project_dir(project_id, "script")
-        write_text(folder / f"script_v{version}.md", text)
-        write_json(folder / f"originality_v{version}.json", report)
+        write_text(folder / f"script_v{s.version}.md", text)
+        write_json(folder / f"originality_v{s.version}.json", report)
         for e in schema_errors("script", doc):
             job_log(db, project_id, "script", f"script.schema: {e}", "warning")
         job_log(db, project_id, "script",
-                f"Script v{version}: {wc} words (target {ctx.target_words}), originality "
+                f"Script v{s.version}: {wc} words (target {ctx.target_words}), originality "
                 f"{report.get('verdict')} max_sim={report.get('max_similarity')}, rewrites={report.get('rewrite_rounds', 0)}")
     return StepResult.wait("approve_script")
+
+
+def _save_version(project_id: uuid.UUID, doc: dict) -> uuid.UUID:
+    """Persist the LLM draft right away so a later failure does not throw away a paid call."""
+    text = doc["text"]
+    with session_scope() as db:
+        version = (db.scalar(select(func.max(Script.version)).where(Script.project_id == project_id)) or 0) + 1
+        db.execute(update(Script).where(Script.project_id == project_id, Script.approved).values(approved=False))
+        s = Script(project_id=project_id, version=version, llm_draft=text, text=text, data=doc,
+                   word_count=count_words(text), approved=False)
+        db.add(s)
+        db.flush()
+        write_text(project_dir(project_id, "script") / f"script_v{version}_draft.md", text)
+        return s.id
+
+
+def _unchecked_draft(project_id: uuid.UUID) -> tuple[uuid.UUID, dict] | None:
+    """Latest version if it is an unapproved, unedited LLM draft without an originality report."""
+    with session_scope() as db:
+        s = db.scalar(select(Script).where(Script.project_id == project_id)
+                      .order_by(Script.version.desc()).limit(1))
+        if s is None or s.approved or s.text != s.llm_draft:
+            return None
+        has_report = db.scalar(select(OriginalityReport.id).where(OriginalityReport.script_id == s.id).limit(1))
+        return None if has_report else (s.id, dict(s.data))

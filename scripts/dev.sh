@@ -27,7 +27,8 @@ trap cleanup INT TERM EXIT
 
 (cd "$ROOT/backend" && exec uv run uvicorn app.main:app --host "$API_HOST" --port "$API_PORT" \
   --reload --reload-dir app --reload-dir ai) & pids+=($!)
-(cd "$ROOT/backend" && exec uv run python -m app.worker) & pids+=($!)
+# worker restarts on code changes too (a step interrupted by a restart is marked failed -> retry)
+(cd "$ROOT/backend" && exec uv run watchfiles --filter python "python -m app.worker" app ai) & pids+=($!)
 FRONT_PORT="$(env_value FRONTEND_PORT 5173)"
 if (exec 3<>"/dev/tcp/127.0.0.1/$FRONT_PORT") 2>/dev/null; then
   echo "Port $FRONT_PORT is already in use - assuming the frontend dev server is running; not starting another"
