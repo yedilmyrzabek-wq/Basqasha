@@ -17,7 +17,7 @@ React 18/19 + Vite + TypeScript (strict) + Tailwind + shadcn/ui; TanStack Query 
   - Шаг 2: angle cards, «Выбрать» / «Свой вариант».
   - Шаг 3: editable facts table (status badge, source link).
   - Шаг 4: text editor, word counter + duration estimate, originality report (flagged sentences highlighted), «Утвердить».
-  - Шаг 5: «Копировать текст для ElevenLabs», mp3 dropzone.
+  - Шаг 5: «Копировать текст для ElevenLabs» (счётчик символов, подсказка «Модель: Eleven v4 / v3»), mp3 dropzone; после загрузки — фактическая длительность и темп (слов/мин).
   - Шаг 7: image cards: «Перегенерировать», «Изменить промпт», «Загрузить свою», QA status.
   - Шаг 8: contact sheet, comment per scene.
   - Шаг 9: video player, «Скачать».

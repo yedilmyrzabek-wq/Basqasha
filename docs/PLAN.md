@@ -22,7 +22,7 @@ LEAD (оркестратор) — основная сессия Claude Code. К�
 | ffmpeg | ✅ 9.0.2 portable в `%USERPROFILE%/tools/ffmpeg/bin` (добавлен в user PATH; виден в новых терминалах) |
 | yt-dlp | ❌ — ставится как Python-зависимость backend |
 | git | ✅ репозиторий, вся работа в ветке `main-agent` (без push) |
-| GPU | NVIDIA RTX 3050 Laptop 4 GB → faster-whisper large-v3 `int8_float16` на CUDA (впритык), fallback CPU `int8` |
+| GPU | NVIDIA RTX 3050 Laptop 4 GB (ASR не используем — решение владельца) |
 | Ключи | Gemini API key и Supabase DATABASE_URL есть у владельца → в `.env` после появления `.env.example` |
 | MCP | vidIQ ✅, chrome-devtools ✅ (вместо Playwright MCP для QA); Supabase MCP ❌ |
 
@@ -30,8 +30,8 @@ LEAD (оркестратор) — основная сессия Claude Code. К�
 | Фаза | Объём | Приёмка |
 |---|---|---|
 | **P0** Research + контракты | 5 исследований, SUMMARY, схемы, миграции, OpenAPI, интерфейсы | CHECKPOINT 1 (SUMMARY.md), CHECKPOINT 2 (контракты) |
-| **P1** Каркас + шаги 1–4 | одна команда запуска, настройки, проекты, шаги источник/идея/факты/сценарий + originality | Демо: `https://www.youtube.com/watch?v=9-eQiEQOhyo` → 3 angles → выбран «как казахи переживали зиму (киіз үй, тезек, қыстау, жұт)» → facts.json с источниками → script_kk 500–550 слов + originality.json ниже порога → «Утвердить» |
-| **P2** Шаги 5–6 | текст для ElevenLabs, загрузка mp3, −16 LUFS, faster-whisper kk + выравнивание, раскадровка | у каждого слова время; storyboard проходит схему, 40–50 сцен, 12–15 фонов |
+| **P1** Каркас + шаги 1–4 | одна команда запуска, настройки, проекты, шаги источник/идея/факты/сценарий + originality | Демо: `https://www.youtube.com/watch?v=9-eQiEQOhyo` → 3 angles → выбран «как казахи переживали зиму (киіз үй, тезек, қыстау, жұт)» → facts.json с источниками → script_kk (бюджет слов из длительности 3–5 мин) + originality.json ниже порога → «Утвердить» |
+| **P2** Шаги 5–6 | текст для ElevenLabs, загрузка mp3, −16 LUFS, выравнивание по паузам, раскадровка | у каждого предложения время; storyboard проходит схему, сцены 2.5–7.5 с, 12–15 фонов |
 | **P3** Движок + шаги 8–9 | Remotion `Explainer` из props.json, contact sheet, рендер MP4 | contact_sheet без обрезок/наложений; длительность = mp3 ± 0.5 с; казахские глифы ок |
 | **P4** Шаг 7 + позы + шаг 10 | Gemini image + vision QA, ручная замена, библиотека поз (chroma-key, нарезка листа), метаданные | видео целиком из ссылки + mp3 |
 | **P5** Масштаб | cost-дашборд, Shorts 9:16, ElevenLabs API за флагом, задел YouTube API и `en` | — |
@@ -77,7 +77,7 @@ LEAD владеет: `docs/PLAN.md`, `docs/research/SUMMARY.md`, `README.md`, `.
 - **qa-tester:** unit + e2e на фикстурах, клик-тест UI, прогон демо-ссылки.
 
 ### P2
-backend: загрузка mp3, ffmpeg loudnorm −16 LUFS, faster-whisper large-v3 kk, выравнивание с утверждённым текстом (fuzzy) + fallback silencedetect, words.json. ai: storyboard-генерация (40–50 сцен, 12–15 фонов, правила темпа). frontend: шаги 5–6. qa.
+backend: загрузка mp3, ffmpeg loudnorm −16 LUFS, выравнивание без ASR: silencedetect + раскладка предложений по паузам + пропорционально длине → words.json; пересчёт темпа голоса (wpm). ai: storyboard-генерация (40–50 сцен, 12–15 фонов, правила темпа). frontend: шаги 5–6. qa.
 
 ### P3
 media: Explainer полностью из props.json, stills/contact sheet, рендер, проверка казахских глифов (шрифт с ә ғ қ ң ө ұ ү һ і). backend: storyboard → props.json (word→frame), запуск Remotion из Python, шаги 8–9. frontend: шаг 8 (комментарии к сценам), шаг 9 (плеер). qa: визуальная проверка листов.
@@ -96,6 +96,7 @@ Research ─► SUMMARY ─► (OK) ─► Contracts ─► (OK) ─► P1 ─�
 
 ## 6. Решения владельца
 - 2026-10-17: озвучка пока вручную — система отдаёт текст, оператор генерирует mp3 в ElevenLabs и загружает. ElevenLabs API подключим позже (P5, провайдер за флагом; тогда можно брать таймкоды из `/with-timestamps` вместо ASR).
+- 2026-10-17: длительность 3–5 мин (параметр); ASR не используем; лимит ≈ $5/видео (картинки); второй язык и vidIQ — в будущем (vidIQ — через промпты, которые оператор прогоняет сам); темы — свежие популярные источники любых жанров.
 - Git: работа в ветке `main-agent`, push в `origin` (github.com/yedilmyrzabek-wq/Basqasha) разрешён.
 
 ## 7. Правила процесса
