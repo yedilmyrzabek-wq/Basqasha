@@ -1,0 +1,14 @@
+{
+ "language": "kk",
+ "facts": [
+  {"id": "f01", "claim": "1879–1880 жылдардағы жұтта кей өңірлерде малдың жартысына жуығы қырылды.", "value": "≈50%", "status": "verified", "on_screen": true,
+   "sources": [{"url": "https://e-history.kz/", "title": "e-history.kz (example)", "is_primary": true}, {"url": "https://kk.wikipedia.org/wiki/Жұт", "title": "Жұт — Уикипедия"}]},
+  {"id": "f02", "claim": "Солтүстік Қазақстанда қыста аяз минус қырық градустан төмен түседі.", "value": "-40 °C", "status": "verified", "on_screen": true,
+   "sources": [{"url": "https://www.kazhydromet.kz/", "title": "Қазгидромет (example)", "is_primary": true}, {"url": "https://stat.gov.kz/", "title": "stat.gov.kz (example)", "is_primary": true}]},
+  {"id": "f03", "claim": "Көшпелілер жылды төрт маусымдық қонысқа бөлді: көктеу, жайлау, күзеу, қыстау.", "value": "4", "status": "verified", "on_screen": true,
+   "sources": [{"url": "https://e-history.kz/", "title": "e-history.kz (example)", "is_primary": true}, {"url": "https://kk.wikipedia.org/wiki/Қыстау", "title": "Қыстау — Уикипедия"}]},
+  {"id": "f04", "claim": "Бір отбасы қысқа бірнеше арба тезек дайындаған.", "value": null, "status": "unverified", "sources": [], "note": "Нет числа — в сценарии только «бірнеше»."},
+  {"id": "f05", "claim": "Жұттың негізгі себебі — жылымықтан кейін жайылымды басқан мұз қабаты (көктайғақ).", "value": null, "status": "verified",
+   "sources": [{"url": "https://kk.wikipedia.org/wiki/Жұт", "title": "Жұт — Уикипедия"}]}
+ ]
+}

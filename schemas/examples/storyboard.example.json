@@ -1,0 +1,2454 @@
+{
+ "language": "kk",
+ "fps": 30,
+ "backgrounds": [
+  {
+   "id": "bg01",
+   "prompt": "Endless winter steppe under a pale sky, snow drifts and distant low hills",
+   "file": "images/bg01.png"
+  },
+  {
+   "id": "bg02",
+   "prompt": "Frozen steppe at night, frost patterns, a large plain thermometer without markings",
+   "file": "images/bg02.png"
+  },
+  {
+   "id": "bg03",
+   "prompt": "White felt yurt standing alone in snowy steppe, thin smoke rising from the top",
+   "file": "images/bg03.png"
+  },
+  {
+   "id": "bg04",
+   "prompt": "Four small landscapes in a row: spring hills, summer pasture, autumn plain, winter camp",
+   "file": "images/bg04.png"
+  },
+  {
+   "id": "bg05",
+   "prompt": "Sheltered winter camp in a foothill valley, tall reeds along a frozen river",
+   "file": "images/bg05.png"
+  },
+  {
+   "id": "bg06",
+   "prompt": "Cutaway of a yurt frame: wooden lattice walls, roof poles and a crown ring",
+   "file": "images/bg06.png"
+  },
+  {
+   "id": "bg07",
+   "prompt": "Close cross-section of thick felt layers and wool fibers, cozy and warm",
+   "file": "images/bg07.png"
+  },
+  {
+   "id": "bg08",
+   "prompt": "Neat stacks of dried dung fuel bricks drying in summer sun beside a yurt",
+   "file": "images/bg08.png"
+  },
+  {
+   "id": "bg09",
+   "prompt": "Inside a yurt: central hearth with glowing embers, smoke rising through the crown ring",
+   "file": "images/bg09.png"
+  },
+  {
+   "id": "bg10",
+   "prompt": "Sheepskin coat, felt boots and a fur hat laid out on a wooden chest",
+   "file": "images/bg10.png"
+  },
+  {
+   "id": "bg11",
+   "prompt": "Horses digging through snow with hooves to reach grass, sheep following behind",
+   "file": "images/bg11.png"
+  },
+  {
+   "id": "bg12",
+   "prompt": "Split landscape: melting snow under warm sun on the left, hard ice crust on the right",
+   "file": "images/bg12.png"
+  },
+  {
+   "id": "bg13",
+   "prompt": "Pasture covered by a thick glossy ice layer, hungry sheep standing on the ice",
+   "file": "images/bg13.png"
+  },
+  {
+   "id": "bg14",
+   "prompt": "Peaceful winter camp at dusk, yurts glowing warmly, livestock sheltered by reeds",
+   "file": "images/bg14.png"
+  }
+ ],
+ "scenes": [
+  {
+   "id": 1,
+   "text": "Мың сегіз жүз сексенінші жылы",
+   "start_word": 0,
+   "end_word": 4,
+   "background": "bg01",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 3
+   },
+   "character": {
+    "pose": "shock",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "at_word": 0,
+     "value": 1880,
+     "suffix": "",
+     "text": "жыл",
+     "x": 1100,
+     "y": 320,
+     "color": "red"
+    }
+   ],
+   "caption_keyword": "сексен",
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 0
+    },
+    {
+     "file": "ding",
+     "at_word": 0
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "text": "кей өңірлерде бір қыста малдың жартысы қырылды.",
+   "start_word": 5,
+   "end_word": 11,
+   "background": "bg02",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 10
+   },
+   "character": {
+    "pose": "shock",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 9,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "at_word": 5,
+     "value": 50,
+     "suffix": "%",
+     "text": "мал",
+     "x": 760,
+     "y": 320,
+     "color": "red"
+    }
+   ],
+   "caption_keyword": "жартыс",
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 5
+    },
+    {
+     "file": "ding",
+     "at_word": 5
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "text": "Ал адамдар қырық градус аязда пешсіз,",
+   "start_word": 12,
+   "end_word": 17,
+   "background": "bg02",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 16
+   },
+   "character": {
+    "pose": "think",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "at_word": 12,
+     "value": -40,
+     "suffix": "°C",
+     "text": "аяз",
+     "x": 1100,
+     "y": 320,
+     "color": "red"
+    }
+   ],
+   "caption_keyword": "аязда",
+   "sfx": [
+    {
+     "file": "ding",
+     "at_word": 12
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "text": "жылу жүйесіз қалай аман қалды?",
+   "start_word": 18,
+   "end_word": 22,
+   "background": "bg03",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 21
+   },
+   "character": {
+    "pose": "shrug",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 18,
+     "text": "Пешсіз қалай?",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "аман",
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 18
+    },
+    {
+     "file": "pop",
+     "at_word": 18
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "text": "Бұл сұрақтың жауабы киіз үйде, тезекте және қыстауда жатыр.",
+   "start_word": 23,
+   "end_word": 31,
+   "background": "bg03",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 28
+   },
+   "character": {
+    "pose": "point",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 28,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 23,
+     "text": "Үй, отын, қыстау",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "сұрақ",
+   "captions": [
+    {
+     "start_word": 23,
+     "end_word": 26,
+     "keyword": "сұрақ"
+    },
+    {
+     "start_word": 27,
+     "end_word": 31,
+     "keyword": "тезек"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 23
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "text": "Соңына дейін көрсеңіз, жұттың шын себебі аяз емес екенін түсінесіз.",
+   "start_word": 32,
+   "end_word": 41,
+   "background": "bg13",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 35
+   },
+   "character": {
+    "pose": "think",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 38,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 32,
+     "text": "Жұт = аяз?",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "жұттың",
+   "captions": [
+    {
+     "start_word": 32,
+     "end_word": 36,
+     "keyword": "жұттың"
+    },
+    {
+     "start_word": 37,
+     "end_word": 41,
+     "keyword": "түсін"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 32
+    },
+    {
+     "file": "pop",
+     "at_word": 32
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "text": "Қазақ даласында қыс ұзақ, қатал және желді болады.",
+   "start_word": 42,
+   "end_word": 49,
+   "background": "bg01",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 46
+   },
+   "character": {
+    "pose": "present",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 46,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 42,
+     "text": "Ұзақ әрі қатал қыс",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "далас",
+   "captions": [
+    {
+     "start_word": 42,
+     "end_word": 45,
+     "keyword": "далас"
+    },
+    {
+     "start_word": 46,
+     "end_word": 49,
+     "keyword": "қатал"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 42
+    },
+    {
+     "file": "pop",
+     "at_word": 42
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "text": "Солтүстікте аяз кейде минус қырық градустан да төмен түседі.",
+   "start_word": 50,
+   "end_word": 58,
+   "background": "bg02",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 53
+   },
+   "character": {
+    "pose": "shock",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 55,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "at_word": 50,
+     "value": -40,
+     "suffix": "°C",
+     "text": "аяз",
+     "x": 760,
+     "y": 320,
+     "color": "red"
+    }
+   ],
+   "caption_keyword": "минус",
+   "captions": [
+    {
+     "start_word": 50,
+     "end_word": 53,
+     "keyword": "минус"
+    },
+    {
+     "start_word": 54,
+     "end_word": 58,
+     "keyword": "граду"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 50
+    },
+    {
+     "file": "ding",
+     "at_word": 50
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "text": "Бірақ көшпелілер қысқа дейін бүкіл жыл бойы дайындалған.",
+   "start_word": 59,
+   "end_word": 66,
+   "background": "bg04",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 66
+   },
+   "character": {
+    "pose": "point",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 63,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 59,
+     "text": "Жыл бойы дайындық",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "көшпе",
+   "captions": [
+    {
+     "start_word": 59,
+     "end_word": 62,
+     "keyword": "көшпе"
+    },
+    {
+     "start_word": 63,
+     "end_word": 66,
+     "keyword": "дайын"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 59
+    },
+    {
+     "file": "pop",
+     "at_word": 59
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "text": "Олар жылды төрт қонысқа бөлді: көктеу, жайлау, күзеу және қыстау.",
+   "start_word": 67,
+   "end_word": 76,
+   "background": "bg04",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 70
+   },
+   "character": {
+    "pose": "present",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 73,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "at_word": 67,
+     "value": 4,
+     "suffix": "",
+     "text": "қоныс",
+     "x": 760,
+     "y": 320,
+     "color": "red"
+    }
+   ],
+   "caption_keyword": "қоныс",
+   "captions": [
+    {
+     "start_word": 67,
+     "end_word": 71,
+     "keyword": "қоныс"
+    },
+    {
+     "start_word": 72,
+     "end_word": 76,
+     "keyword": "көкте"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "ding",
+     "at_word": 67
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "text": "Қыстау желден қорғалған, жылы, суы мен шөбі бар орын.",
+   "start_word": 77,
+   "end_word": 85,
+   "background": "bg05",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 77
+   },
+   "character": {
+    "pose": "point",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 82,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 77,
+     "text": "Қыстау",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "қыстау",
+   "captions": [
+    {
+     "start_word": 77,
+     "end_word": 80,
+     "keyword": "қыстау"
+    },
+    {
+     "start_word": 81,
+     "end_word": 85,
+     "keyword": "шөбі"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 77
+    },
+    {
+     "file": "pop",
+     "at_word": 77
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "text": "Көбіне ол тау етегінде немесе өзен жағасындағы қамыс арасында болды.",
+   "start_word": 86,
+   "end_word": 95,
+   "background": "bg05",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 89
+   },
+   "character": {
+    "pose": "think",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 92,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 86,
+     "text": "Тау етегі, қамыс",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "етег",
+   "captions": [
+    {
+     "start_word": 86,
+     "end_word": 90,
+     "keyword": "етег"
+    },
+    {
+     "start_word": 91,
+     "end_word": 95,
+     "keyword": "жағас"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 86
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "text": "Сондықтан қыстауды таңдау отбасының өмірі мен өліміне тең шешім еді.",
+   "start_word": 96,
+   "end_word": 105,
+   "background": "bg05",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 104
+   },
+   "character": {
+    "pose": "shock",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 102,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 96,
+     "text": "Өмір мен өлім",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "сонды",
+   "captions": [
+    {
+     "start_word": 96,
+     "end_word": 100,
+     "keyword": "сонды"
+    },
+    {
+     "start_word": 101,
+     "end_word": 105,
+     "keyword": "шешім"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 96
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "text": "Енді басты сұрақ: жылуды қалай сақтады?",
+   "start_word": 106,
+   "end_word": 111,
+   "background": "bg03",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 109
+   },
+   "character": {
+    "pose": "think",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 106,
+     "text": "Жылу қалай сақталды?",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "жылуд",
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 106
+    },
+    {
+     "file": "pop",
+     "at_word": 106
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "text": "Жауаптың бірінші бөлігі киіз үйдің өзі.",
+   "start_word": 112,
+   "end_word": 117,
+   "background": "bg06",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 115
+   },
+   "character": {
+    "pose": "point",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 112,
+     "text": "1. Киіз үй",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "киіз",
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 112
+    },
+    {
+     "file": "pop",
+     "at_word": 112
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "text": "Киіз үй керегеден, уықтан және шаңырақтан құралған ағаш қаңқа.",
+   "start_word": 118,
+   "end_word": 126,
+   "background": "bg06",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 123
+   },
+   "character": {
+    "pose": "present",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 123,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 118,
+     "text": "Кереге, уық, шаңырақ",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "керег",
+   "captions": [
+    {
+     "start_word": 118,
+     "end_word": 121,
+     "keyword": "керег"
+    },
+    {
+     "start_word": 122,
+     "end_word": 126,
+     "keyword": "шаңырақ"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 118
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "text": "Қаңқаның сыртын бірнеше қабат қалың киізбен орайды.",
+   "start_word": 127,
+   "end_word": 133,
+   "background": "bg07",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 130
+   },
+   "character": {
+    "pose": "point",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 131,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 127,
+     "text": "Бірнеше қабат киіз",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "қабат",
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 127
+    },
+    {
+     "file": "pop",
+     "at_word": 127
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "text": "Қыс түскенде киіздің қабатын көбейтіп, етегін қармен басты.",
+   "start_word": 134,
+   "end_word": 141,
+   "background": "bg07",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 138
+   },
+   "character": {
+    "pose": "think",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 138,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 134,
+     "text": "Қабат көбейеді",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "түске",
+   "captions": [
+    {
+     "start_word": 134,
+     "end_word": 137,
+     "keyword": "түске"
+    },
+    {
+     "start_word": 138,
+     "end_word": 141,
+     "keyword": "көбей"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 134
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "text": "Киіз жүннен басылады, ал жүн ауаны ұстап, жылуды шығармайды.",
+   "start_word": 142,
+   "end_word": 150,
+   "background": "bg07",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 147
+   },
+   "character": {
+    "pose": "excited",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 147,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 142,
+     "text": "Жүн ауаны ұстайды",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "басыл",
+   "captions": [
+    {
+     "start_word": 142,
+     "end_word": 145,
+     "keyword": "басыл"
+    },
+    {
+     "start_word": 146,
+     "end_word": 150,
+     "keyword": "ауан"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 142
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "text": "Бірақ ең жақсы киіз де отсыз жылытпайды.",
+   "start_word": 151,
+   "end_word": 157,
+   "background": "bg03",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.07,
+    "focus": [
+     0.5,
+     0.35
+    ],
+    "punch_at_word": 156
+   },
+   "character": {
+    "pose": "shrug",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 155,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 151,
+     "text": "Отсыз жылу жоқ",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "отсыз",
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 151
+    },
+    {
+     "file": "pop",
+     "at_word": 151
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "text": "Ал далада орман жоқ, отын табу оңай емес.",
+   "start_word": 158,
+   "end_word": 165,
+   "background": "bg01",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 160
+   },
+   "character": {
+    "pose": "shrug",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 162,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 158,
+     "text": "Орман жоқ",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "орман",
+   "captions": [
+    {
+     "start_word": 158,
+     "end_word": 161,
+     "keyword": "орман"
+    },
+    {
+     "start_word": 162,
+     "end_word": 165,
+     "keyword": "отын"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 158
+    },
+    {
+     "file": "pop",
+     "at_word": 158
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "text": "Сондықтан қазақтар тезекті, яғни кептірілген малдың қиын жақты.",
+   "start_word": 166,
+   "end_word": 173,
+   "background": "bg08",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 168
+   },
+   "character": {
+    "pose": "point",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 170,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 166,
+     "text": "2. Тезек",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "тезек",
+   "captions": [
+    {
+     "start_word": 166,
+     "end_word": 169,
+     "keyword": "тезек"
+    },
+    {
+     "start_word": 170,
+     "end_word": 173,
+     "keyword": "кепті"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 166
+    },
+    {
+     "file": "pop",
+     "at_word": 166
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "text": "Жазда тезекті жинап, күнге кептіріп, қысқа қатарлап жинап қойған.",
+   "start_word": 174,
+   "end_word": 182,
+   "background": "bg08",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 178
+   },
+   "character": {
+    "pose": "present",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 179,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 174,
+     "text": "Жазда жиналады",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "тезек",
+   "captions": [
+    {
+     "start_word": 174,
+     "end_word": 177,
+     "keyword": "тезек"
+    },
+    {
+     "start_word": 178,
+     "end_word": 182,
+     "keyword": "кептір"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 174
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "text": "Тезек баяу жанады, ұзақ уақыт біркелкі жылу береді.",
+   "start_word": 183,
+   "end_word": 190,
+   "background": "bg09",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 184
+   },
+   "character": {
+    "pose": "excited",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 187,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 183,
+     "text": "Баяу әрі ұзақ жанады",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "баяу",
+   "captions": [
+    {
+     "start_word": 183,
+     "end_word": 186,
+     "keyword": "баяу"
+    },
+    {
+     "start_word": 187,
+     "end_word": 190,
+     "keyword": "бірке"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 183
+    },
+    {
+     "file": "pop",
+     "at_word": 183
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "text": "Бір отбасы қысқа бірнеше арба тезек дайындауы керек болды.",
+   "start_word": 191,
+   "end_word": 199,
+   "background": "bg08",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 195
+   },
+   "character": {
+    "pose": "think",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 196,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 191,
+     "text": "Бірнеше арба тезек",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "бірне",
+   "captions": [
+    {
+     "start_word": 191,
+     "end_word": 194,
+     "keyword": "бірне"
+    },
+    {
+     "start_word": 195,
+     "end_word": 199,
+     "keyword": "арба"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 191
+    },
+    {
+     "file": "pop",
+     "at_word": 191
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "text": "Ошақ киіз үйдің дәл ортасында, шаңырақтың астында тұрды.",
+   "start_word": 200,
+   "end_word": 207,
+   "background": "bg09",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 200
+   },
+   "character": {
+    "pose": "point",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 204,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 200,
+     "text": "Ошақ ортада",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "ошақ",
+   "captions": [
+    {
+     "start_word": 200,
+     "end_word": 203,
+     "keyword": "ошақ"
+    },
+    {
+     "start_word": 204,
+     "end_word": 207,
+     "keyword": "шаңыр"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 200
+    },
+    {
+     "file": "pop",
+     "at_word": 200
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "text": "Түтін жоғары көтеріліп, шаңырақ арқылы сыртқа шығып отырды.",
+   "start_word": 208,
+   "end_word": 215,
+   "background": "bg09",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 208
+   },
+   "character": {
+    "pose": "present",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 212,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "arrow",
+     "at_word": 209,
+     "x": 900,
+     "y": 700,
+     "x2": 1100,
+     "y2": 250
+    }
+   ],
+   "caption_keyword": "түтін",
+   "captions": [
+    {
+     "start_word": 208,
+     "end_word": 211,
+     "keyword": "түтін"
+    },
+    {
+     "start_word": 212,
+     "end_word": 215,
+     "keyword": "арқыл"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 209
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "text": "Түнде отты сөндірмей, шоқты күлмен көміп сақтаған.",
+   "start_word": 216,
+   "end_word": 222,
+   "background": "bg09",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.07,
+    "focus": [
+     0.5,
+     0.35
+    ],
+    "punch_at_word": 219
+   },
+   "character": {
+    "pose": "think",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 220,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 216,
+     "text": "Шоқ күлдің астында",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "шоқты",
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 216
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "text": "Ал киім ше? Қой терісінен тігілген тон аяздан қорғады.",
+   "start_word": 223,
+   "end_word": 231,
+   "background": "bg10",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 229
+   },
+   "character": {
+    "pose": "point",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 228,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 223,
+     "text": "3. Тон",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "киім",
+   "captions": [
+    {
+     "start_word": 223,
+     "end_word": 226,
+     "keyword": "киім"
+    },
+    {
+     "start_word": 227,
+     "end_word": 231,
+     "keyword": "тон"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 223
+    },
+    {
+     "file": "pop",
+     "at_word": 223
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "text": "Аяғына киіз байпақ пен қалың етік киді.",
+   "start_word": 232,
+   "end_word": 238,
+   "background": "bg10",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 234
+   },
+   "character": {
+    "pose": "present",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 236,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 232,
+     "text": "Байпақ пен етік",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "байпақ",
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 232
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "text": "Бірақ адамға қарағанда малға қыс әлдеқайда қауіпті болды.",
+   "start_word": 239,
+   "end_word": 246,
+   "background": "bg11",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 245
+   },
+   "character": {
+    "pose": "shock",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 243,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 239,
+     "text": "Мал үшін қауіпті",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "қарағ",
+   "captions": [
+    {
+     "start_word": 239,
+     "end_word": 242,
+     "keyword": "қарағ"
+    },
+    {
+     "start_word": 243,
+     "end_word": 246,
+     "keyword": "қауіп"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 239
+    },
+    {
+     "file": "pop",
+     "at_word": 239
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "text": "Мал қыста да далада жайылып, қардың астынан шөп іздеді.",
+   "start_word": 247,
+   "end_word": 255,
+   "background": "bg11",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 255
+   },
+   "character": {
+    "pose": "think",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 252,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 247,
+     "text": "Қар астындағы шөп",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "далад",
+   "captions": [
+    {
+     "start_word": 247,
+     "end_word": 250,
+     "keyword": "далад"
+    },
+    {
+     "start_word": 251,
+     "end_word": 255,
+     "keyword": "ізде"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 247
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "text": "Жылқы қарды тұяғымен тебіндеп, астындағы шөпке жетеді.",
+   "start_word": 256,
+   "end_word": 262,
+   "background": "bg11",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 259
+   },
+   "character": {
+    "pose": "excited",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 260,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 256,
+     "text": "Тебін",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "тебін",
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 256
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "text": "Ал қой мен сиыр жылқының ізімен жүріп қоректенді.",
+   "start_word": 263,
+   "end_word": 270,
+   "background": "bg11",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.07,
+    "focus": [
+     0.5,
+     0.35
+    ],
+    "punch_at_word": 268
+   },
+   "character": {
+    "pose": "point",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 267,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "arrow",
+     "at_word": 264,
+     "x": 560,
+     "y": 700,
+     "x2": 760,
+     "y2": 250
+    }
+   ],
+   "caption_keyword": "сиыр",
+   "captions": [
+    {
+     "start_word": 263,
+     "end_word": 266,
+     "keyword": "сиыр"
+    },
+    {
+     "start_word": 267,
+     "end_word": 270,
+     "keyword": "ізім"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 264
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "text": "Енді жұттың шын себебіне келейік.",
+   "start_word": 271,
+   "end_word": 275,
+   "background": "bg12",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 274
+   },
+   "character": {
+    "pose": "think",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 271,
+     "text": "Жұттың себебі",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "себеб",
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 271
+    },
+    {
+     "file": "pop",
+     "at_word": 271
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "text": "Жұт аяздан емес, жерді басқан мұз қабатынан басталады.",
+   "start_word": 276,
+   "end_word": 283,
+   "background": "bg13",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 281
+   },
+   "character": {
+    "pose": "shock",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 280,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 276,
+     "text": "Мұз қабаты",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "аязда",
+   "captions": [
+    {
+     "start_word": 276,
+     "end_word": 279,
+     "keyword": "аязда"
+    },
+    {
+     "start_word": 280,
+     "end_word": 283,
+     "keyword": "мұз"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 276
+    },
+    {
+     "file": "pop",
+     "at_word": 276
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "text": "Жылымық болып, қар ериді де, артынан қатты аяз түседі.",
+   "start_word": 284,
+   "end_word": 292,
+   "background": "bg12",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 284
+   },
+   "character": {
+    "pose": "present",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 289,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 284,
+     "text": "Жылымық, сосын аяз",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "жылымық",
+   "captions": [
+    {
+     "start_word": 284,
+     "end_word": 287,
+     "keyword": "жылымық"
+    },
+    {
+     "start_word": 288,
+     "end_word": 292,
+     "keyword": "артын"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 284
+    },
+    {
+     "file": "pop",
+     "at_word": 284
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "text": "Сонда қардың үстін қалың мұз жауып қалады.",
+   "start_word": 293,
+   "end_word": 299,
+   "background": "bg12",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 297
+   },
+   "character": {
+    "pose": "point",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 297,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 293,
+     "text": "Қалың мұз",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "мұз",
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 293
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "text": "Мал тұяғымен мұзды жара алмай, шөпке жете алмайды.",
+   "start_word": 300,
+   "end_word": 307,
+   "background": "bg13",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 302
+   },
+   "character": {
+    "pose": "shrug",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 304,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 300,
+     "text": "Шөпке жете алмайды",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "мұзд",
+   "captions": [
+    {
+     "start_word": 300,
+     "end_word": 303,
+     "keyword": "мұзд"
+    },
+    {
+     "start_word": 304,
+     "end_word": 307,
+     "keyword": "шөпке"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 300
+    },
+    {
+     "file": "pop",
+     "at_word": 300
+    }
+   ]
+  },
+  {
+   "id": 40,
+   "text": "Міне, сондықтан бір қыста мыңдаған бас мал аштан қырылған.",
+   "start_word": 308,
+   "end_word": 316,
+   "background": "bg13",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.07,
+    "focus": [
+     0.5,
+     0.35
+    ],
+    "punch_at_word": 315
+   },
+   "character": {
+    "pose": "think",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 313,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 308,
+     "text": "Аштан, аяздан емес",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "сонды",
+   "captions": [
+    {
+     "start_word": 308,
+     "end_word": 311,
+     "keyword": "сонды"
+    },
+    {
+     "start_word": 312,
+     "end_word": 316,
+     "keyword": "аштан"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 308
+    }
+   ]
+  },
+  {
+   "id": 41,
+   "text": "Яғни қазақтарды аман алып қалған тек жылы үй емес еді.",
+   "start_word": 317,
+   "end_word": 326,
+   "background": "bg14",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch_at_word": 319
+   },
+   "character": {
+    "pose": "present",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 323,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 317,
+     "text": "Тек үй емес",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "аман",
+   "captions": [
+    {
+     "start_word": 317,
+     "end_word": 321,
+     "keyword": "аман"
+    },
+    {
+     "start_word": 322,
+     "end_word": 326,
+     "keyword": "жылы"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 317
+    },
+    {
+     "file": "pop",
+     "at_word": 317
+    }
+   ]
+  },
+  {
+   "id": 42,
+   "text": "Оларды дұрыс қыстау, жиналған тезек және малды күту білімі сақтады.",
+   "start_word": 327,
+   "end_word": 336,
+   "background": "bg14",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch_at_word": 335
+   },
+   "character": {
+    "pose": "excited",
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "pose_changes": [
+     {
+      "at_word": 333,
+      "pose": "point"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 327,
+     "text": "Білім сақтады",
+     "x": 760,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "жинал",
+   "captions": [
+    {
+     "start_word": 327,
+     "end_word": 331,
+     "keyword": "жинал"
+    },
+    {
+     "start_word": 332,
+     "end_word": 336,
+     "keyword": "білім"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "pop",
+     "at_word": 327
+    }
+   ]
+  },
+  {
+   "id": 43,
+   "text": "Келесі видеода жазда көшпелілер ыстықтан қалай құтылғанын көреміз.",
+   "start_word": 337,
+   "end_word": 344,
+   "background": "bg04",
+   "camera": {
+    "zoom_from": 1.0,
+    "zoom_to": 1.1,
+    "focus": [
+     0.75,
+     0.6
+    ],
+    "punch_at_word": 341
+   },
+   "character": {
+    "pose": "point",
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "pose_changes": [
+     {
+      "at_word": 341,
+      "pose": "think"
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "at_word": 337,
+     "text": "Келесі: жаз",
+     "x": 1100,
+     "y": 300
+    }
+   ],
+   "caption_keyword": "көшпе",
+   "captions": [
+    {
+     "start_word": 337,
+     "end_word": 340,
+     "keyword": "көшпе"
+    },
+    {
+     "start_word": 341,
+     "end_word": 344,
+     "keyword": "ыстық"
+    }
+   ],
+   "sfx": [
+    {
+     "file": "whoosh",
+     "at_word": 337
+    },
+    {
+     "file": "pop",
+     "at_word": 337
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,328 @@
+{
+ "composition": "Explainer",
+ "width": 1920,
+ "height": 1080,
+ "fps": 30,
+ "duration_frames": 514,
+ "language": "kk",
+ "voice": {
+  "src": "http://127.0.0.1:8000/files/data/projects/3f2a9c1e-0b7d-4c55-9e61-2d8f4a7b9c10/voice/voice_v1.norm.wav",
+  "volume": 1.0
+ },
+ "music": {
+  "src": "http://127.0.0.1:8000/files/library/sfx/music/pad.wav",
+  "volume": 0.13
+ },
+ "progress_bar": true,
+ "sponsor_badge": null,
+ "scenes": [
+  {
+   "id": 1,
+   "from": 0,
+   "duration": 76,
+   "background": {
+    "src": "http://127.0.0.1:8000/files/data/projects/3f2a9c1e-0b7d-4c55-9e61-2d8f4a7b9c10/images/bg01.png",
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch": [
+     41
+    ]
+   },
+   "character": {
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "shock",
+      "src": "http://127.0.0.1:8000/files/library/poses/pose_shock.png",
+      "width": 188,
+      "height": 320
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "value": 1880,
+     "suffix": "",
+     "text": "жыл",
+     "x": 1100,
+     "y": 320,
+     "color": "red",
+     "at": 8
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "from": 76,
+   "duration": 119,
+   "background": {
+    "src": "http://127.0.0.1:8000/files/data/projects/3f2a9c1e-0b7d-4c55-9e61-2d8f4a7b9c10/images/bg02.png",
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch": [
+     75
+    ]
+   },
+   "character": {
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "shock",
+      "src": "http://127.0.0.1:8000/files/library/poses/pose_shock.png",
+      "width": 188,
+      "height": 320
+     },
+     {
+      "at": 58,
+      "pose": "point",
+      "src": "http://127.0.0.1:8000/files/library/poses/pose_point.png",
+      "width": 269,
+      "height": 320
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "value": 50,
+     "suffix": "%",
+     "text": "мал",
+     "x": 760,
+     "y": 320,
+     "color": "red",
+     "at": 2
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "from": 195,
+   "duration": 89,
+   "background": {
+    "src": "http://127.0.0.1:8000/files/data/projects/3f2a9c1e-0b7d-4c55-9e61-2d8f4a7b9c10/images/bg02.png",
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch": [
+     59
+    ]
+   },
+   "character": {
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "think",
+      "src": "http://127.0.0.1:8000/files/library/poses/pose_think.png",
+      "width": 184,
+      "height": 320
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "counter",
+     "value": -40,
+     "suffix": "°C",
+     "text": "аяз",
+     "x": 1100,
+     "y": 320,
+     "color": "red",
+     "at": 3
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "from": 284,
+   "duration": 81,
+   "background": {
+    "src": "http://127.0.0.1:8000/files/data/projects/3f2a9c1e-0b7d-4c55-9e61-2d8f4a7b9c10/images/bg03.png",
+    "zoom_from": 1.0,
+    "zoom_to": 1.08,
+    "focus": [
+     0.6,
+     0.5
+    ],
+    "punch": [
+     48
+    ]
+   },
+   "character": {
+    "x": 1620,
+    "y": 900,
+    "height": 470,
+    "flip": true,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "shrug",
+      "src": "http://127.0.0.1:8000/files/library/poses/pose_shrug.png",
+      "width": 300,
+      "height": 320
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "text": "Пешсіз қалай?",
+     "x": 760,
+     "y": 300,
+     "at": 3
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "from": 365,
+   "duration": 149,
+   "background": {
+    "src": "http://127.0.0.1:8000/files/data/projects/3f2a9c1e-0b7d-4c55-9e61-2d8f4a7b9c10/images/bg03.png",
+    "zoom_from": 1.0,
+    "zoom_to": 1.06,
+    "focus": [
+     0.35,
+     0.45
+    ],
+    "punch": [
+     77
+    ]
+   },
+   "character": {
+    "x": 300,
+    "y": 900,
+    "height": 470,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "point",
+      "src": "http://127.0.0.1:8000/files/library/poses/pose_point.png",
+      "width": 269,
+      "height": 320
+     },
+     {
+      "at": 77,
+      "pose": "think",
+      "src": "http://127.0.0.1:8000/files/library/poses/pose_think.png",
+      "width": 184,
+      "height": 320
+     }
+    ]
+   },
+   "overlays": [
+    {
+     "type": "label",
+     "text": "Үй, отын, қыстау",
+     "x": 1100,
+     "y": 300,
+     "at": 3
+    }
+   ]
+  }
+ ],
+ "captions": [
+  {
+   "from": 8,
+   "to": 82,
+   "text": "Мың сегіз жүз сексенінші жылы",
+   "keyword": "сексен"
+  },
+  {
+   "from": 78,
+   "to": 192,
+   "text": "кей өңірлерде бір қыста малдың жартысы қырылды.",
+   "keyword": "жартыс"
+  },
+  {
+   "from": 198,
+   "to": 289,
+   "text": "Ал адамдар қырық градус аязда пешсіз,",
+   "keyword": "аязда"
+  },
+  {
+   "from": 287,
+   "to": 362,
+   "text": "жылу жүйесіз қалай аман қалды?",
+   "keyword": "аман"
+  },
+  {
+   "from": 368,
+   "to": 431,
+   "text": "Бұл сұрақтың жауабы киіз",
+   "keyword": "сұрақ"
+  },
+  {
+   "from": 427,
+   "to": 511,
+   "text": "үйде, тезекте және қыстауда жатыр.",
+   "keyword": "тезек"
+  }
+ ],
+ "sfx": [
+  {
+   "src": "http://127.0.0.1:8000/files/library/sfx/whoosh.wav",
+   "from": 8,
+   "volume": 0.6
+  },
+  {
+   "src": "http://127.0.0.1:8000/files/library/sfx/ding.wav",
+   "from": 8,
+   "volume": 0.6
+  },
+  {
+   "src": "http://127.0.0.1:8000/files/library/sfx/whoosh.wav",
+   "from": 78,
+   "volume": 0.6
+  },
+  {
+   "src": "http://127.0.0.1:8000/files/library/sfx/ding.wav",
+   "from": 78,
+   "volume": 0.6
+  },
+  {
+   "src": "http://127.0.0.1:8000/files/library/sfx/ding.wav",
+   "from": 198,
+   "volume": 0.6
+  },
+  {
+   "src": "http://127.0.0.1:8000/files/library/sfx/whoosh.wav",
+   "from": 287,
+   "volume": 0.6
+  },
+  {
+   "src": "http://127.0.0.1:8000/files/library/sfx/pop.wav",
+   "from": 287,
+   "volume": 0.6
+  },
+  {
+   "src": "http://127.0.0.1:8000/files/library/sfx/pop.wav",
+   "from": 368,
+   "volume": 0.6
+  }
+ ]
+}

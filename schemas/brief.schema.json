@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://basqasha.local/schemas/brief.schema.json",
+  "title": "Step 2 output: idea brief + 3 localization angles",
+  "description": "Produced from the source transcript by step 2. MUST NOT contain quotes, jokes, metaphors or the title of the source. Content language = project language. Stored in table brief (brief) and angle (each angle).",
+  "type": "object",
+  "required": ["language", "brief", "angles"],
+  "additionalProperties": false,
+  "properties": {
+    "language": {"enum": ["kk", "ru", "en"]},
+    "brief": {
+      "type": "object",
+      "required": ["topic", "core_question", "structure_idea", "key_concepts", "risk"],
+      "additionalProperties": false,
+      "properties": {
+        "topic": {"type": "string", "minLength": 3, "maxLength": 200},
+        "core_question": {"type": "string", "minLength": 3, "maxLength": 200, "description": "The ONE question the video answers (one sub-question if the source is > 15 min)."},
+        "structure_idea": {"type": "array", "items": {"type": "string", "maxLength": 120}, "minItems": 2, "maxItems": 8, "description": "General arc only, e.g. dwelling -> fuel -> disaster -> today."},
+        "key_concepts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["term", "gloss"],
+            "additionalProperties": false,
+            "properties": {"term": {"type": "string"}, "gloss": {"type": "string", "maxLength": 120}}
+          }
+        },
+        "category": {"enum": ["H", "W", "E", "G", "S", "F", "Sp", "P", "M"], "description": "H history, W how it works, E economics, G geography/nature, S science, F food, Sp sport, P psychology, M motivation/discipline."},
+        "risk": {"type": "integer", "minimum": 0, "maximum": 3, "description": "0 none .. 3 reject (health/finance/legal/political advice)."},
+        "sensitive_topics": {"type": "array", "items": {"type": "string"}, "description": "If non-empty: >= 2 independent sources per number + neutral-tone check."},
+        "operator_summary": {"type": "string", "description": "Short summary in the UI language (ru) for the operator."}
+      }
+    },
+    "angles": {"type": "array", "items": {"$ref": "#/$defs/angle"}, "minItems": 3, "maxItems": 3}
+  },
+  "$defs": {
+    "angle": {
+      "type": "object",
+      "required": ["title", "pitch"],
+      "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "minLength": 3, "maxLength": 60, "description": "Working title in the content language."},
+        "pitch": {"type": "string", "maxLength": 600},
+        "why_it_works": {"type": "string", "maxLength": 400, "description": "For the operator (ru)."},
+        "hook_words": {"type": "array", "items": {"type": "string"}, "maxItems": 5, "description": "Local hook words, e.g. жұт, қыстау."},
+        "suggested_hook_type": {"enum": ["question", "number", "paradox", "scene", "myth"]},
+        "score": {"type": "number", "minimum": 0, "maximum": 40, "description": "2D + 3K + 1.5V + 1.5F - 3R (topics_backlog R2)."}
+      }
+    }
+  }
+}

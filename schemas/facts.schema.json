@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://basqasha.local/schemas/facts.schema.json",
+  "title": "Step 3 output: facts with sources",
+  "description": "Rows of table fact. Unverified/conflicting/rejected facts are never used as numbers in the script. A number may appear on screen only if on_screen=true (verified, >= 2 sources, >= 1 primary).",
+  "type": "object",
+  "required": ["language", "facts"],
+  "additionalProperties": false,
+  "properties": {
+    "language": {"enum": ["kk", "ru", "en"]},
+    "facts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/fact"}}
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["url"],
+      "additionalProperties": false,
+      "properties": {
+        "url": {"type": "string", "format": "uri"},
+        "title": {"type": "string"},
+        "is_primary": {"type": "boolean", "default": false, "description": "gov.kz, stat.gov.kz, nationalbank.kz, UN/World Bank, peer-reviewed."}
+      }
+    },
+    "fact": {
+      "type": "object",
+      "required": ["id", "claim", "status", "sources"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^f[0-9]{2,3}$"},
+        "claim": {"type": "string", "minLength": 3},
+        "value": {"type": ["string", "null"], "description": "The number/date as text, e.g. '1880', '50%', 'from -40 to -45 °C'."},
+        "status": {"enum": ["verified", "unverified", "conflicting", "rejected"]},
+        "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+        "on_screen": {"type": "boolean", "default": false},
+        "note": {"type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "verified"}}}, "then": {"properties": {"sources": {"minItems": 1}}}},
+        {
+          "if": {"properties": {"on_screen": {"const": true}}, "required": ["on_screen"]},
+          "then": {
+            "properties": {
+              "status": {"const": "verified"},
+              "sources": {"minItems": 2, "contains": {"properties": {"is_primary": {"const": true}}, "required": ["is_primary"]}}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

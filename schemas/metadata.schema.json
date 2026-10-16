@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://basqasha.local/schemas/metadata.schema.json",
+  "title": "Step 10 output: YouTube metadata + publish checklist",
+  "type": "object",
+  "required": ["language", "titles", "description", "chapters", "sources", "thumbnail_texts", "checklist"],
+  "additionalProperties": false,
+  "properties": {
+    "language": {"enum": ["kk", "ru", "en"]},
+    "titles": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {"type": "string", "minLength": 10, "maxLength": 60, "pattern": "^[^<>]*$"},
+      "description": ">= 2 with a number, >= 2 with a question (checked by the step)."
+    },
+    "description": {"type": "string", "maxLength": 2400},
+    "chapters": {
+      "type": "array", "minItems": 4,
+      "items": {
+        "type": "object", "required": ["at", "title"], "additionalProperties": false,
+        "properties": {"at": {"type": "string", "pattern": "^([0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9]$"}, "title": {"type": "string", "maxLength": 60}}
+      },
+      "description": "First chapter at 00:00, ascending, each >= 10 s."
+    },
+    "sources": {
+      "type": "array", "minItems": 1,
+      "items": {"type": "object", "required": ["url"], "additionalProperties": false,
+                "properties": {"title": {"type": "string"}, "url": {"type": "string", "format": "uri"}}}
+    },
+    "hashtags": {"type": "array", "maxItems": 3, "items": {"type": "string", "pattern": "^#\\S+$"}},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "thumbnail_texts": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {"type": "string", "maxLength": 18, "pattern": "^\\S+(\\s+\\S+){0,2}$"}
+    },
+    "checklist": {
+      "type": "object",
+      "required": ["made_for_kids", "ai_disclosure", "paid_promotion"],
+      "additionalProperties": false,
+      "properties": {
+        "made_for_kids": {"const": false},
+        "ai_disclosure": {"type": "boolean", "description": "true iff any selected image is_photoreal/depicts_real_person (computed)."},
+        "paid_promotion": {"type": "boolean", "description": "= project.sponsored."},
+        "voice_plan_paid": {"type": "boolean", "description": "Publishing is blocked if the ElevenLabs plan is free."}
+      }
+    }
+  }
+}

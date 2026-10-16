@@ -1,0 +1,978 @@
+openapi: 3.1.0
+info:
+  title: Basqasha local API
+  version: 0.1.0
+  description: |
+    Local single-user API (FastAPI, http://127.0.0.1:8000). No auth.
+    Long work is queued (Huey) and returns 202 + StepState; the UI polls
+    `GET /api/projects/{projectId}` every 2 s while any step is `running`.
+    Static media: `GET /files/data/<path>` -> DATA_DIR, `GET /files/library/<path>` -> LIBRARY_DIR.
+    JSON documents use the JSON Schemas in /schemas (referenced below).
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+servers:
+  - url: http://127.0.0.1:8000
+security: []
+tags:
+  - name: projects
+  - name: steps
+  - name: content
+  - name: media
+  - name: library
+  - name: settings
+
+paths:
+  /api/health:
+    get:
+      tags: [settings]
+      operationId: health
+      summary: DB reachability (Supabase may be paused), last backup, tool availability
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Health'}
+
+  /api/projects:
+    get:
+      tags: [projects]
+      operationId: listProjects
+      summary: Projects list (status, duration, cost)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Project'}}
+    post:
+      tags: [projects]
+      operationId: createProject
+      summary: New video from a URL or pasted transcript; starts step 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ProjectCreate'}
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ProjectDetail'}
+
+  /api/projects/{projectId}:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [projects]
+      operationId: getProject
+      summary: Project with all step states (poll this)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ProjectDetail'}
+        '404': {$ref: '#/components/responses/NotFound'}
+    patch:
+      tags: [projects]
+      operationId: updateProject
+      summary: Edit title, duration, sponsorship, budget (raise budget to continue after budget stop), archive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ProjectUpdate'}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ProjectDetail'}
+    delete:
+      tags: [projects]
+      operationId: deleteProject
+      summary: Delete DB rows (files in data/ are kept unless delete_files=true)
+      parameters:
+        - {name: delete_files, in: query, schema: {type: boolean, default: false}}
+      responses:
+        '204': {description: Deleted}
+
+  /api/projects/{projectId}/steps/{step}/run:
+    parameters: [{$ref: '#/components/parameters/projectId'}, {$ref: '#/components/parameters/step'}]
+    post:
+      tags: [steps]
+      operationId: runStep
+      summary: Run / retry («Повторить») a step; downstream done steps become stale
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StepState'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /api/projects/{projectId}/steps/{step}/logs:
+    parameters: [{$ref: '#/components/parameters/projectId'}, {$ref: '#/components/parameters/step'}]
+    get:
+      tags: [steps]
+      operationId: getStepLogs
+      summary: Get step logs
+      parameters:
+        - {name: after_id, in: query, schema: {type: integer}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/LogEntry'}}
+
+  /api/projects/{projectId}/source:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [content]
+      operationId: getSource
+      summary: Step 1 transcript + YouTube metadata
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Source'}
+    put:
+      tags: [content]
+      operationId: putTranscript
+      summary: Manual transcript paste (fallback when yt-dlp is blocked); completes step 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [transcript]
+              properties: {transcript: {type: string, minLength: 200}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Source'}
+
+  /api/projects/{projectId}/idea:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [content]
+      operationId: getIdea
+      summary: Step 2 brief + angles (with ids and chosen flag)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Idea'}
+
+  /api/projects/{projectId}/angles/{angleId}/choose:
+    parameters: [{$ref: '#/components/parameters/projectId'}, {name: angleId, in: path, required: true, schema: {type: string, format: uuid}}]
+    post:
+      tags: [content]
+      operationId: chooseAngle
+      summary: «Выбрать» — completes step 2, queues step 3
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StepState'}
+
+  /api/projects/{projectId}/angles/custom:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    post:
+      tags: [content]
+      operationId: customAngle
+      summary: «Свой вариант» — operator angle, chosen immediately
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../../schemas/brief.schema.json#/$defs/angle'}
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StepState'}
+
+  /api/projects/{projectId}/facts:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [content]
+      operationId: listFacts
+      summary: List facts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/FactRow'}}
+    post:
+      tags: [content]
+      operationId: createFact
+      summary: Add a fact (marks script stale if it exists)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../../schemas/facts.schema.json#/$defs/fact'}
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FactRow'}
+
+  /api/projects/{projectId}/facts/{factId}:
+    parameters: [{$ref: '#/components/parameters/projectId'}, {name: factId, in: path, required: true, schema: {type: string, format: uuid}}]
+    put:
+      tags: [content]
+      operationId: updateFact
+      summary: Update fact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../../schemas/facts.schema.json#/$defs/fact'}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/FactRow'}
+    delete:
+      tags: [content]
+      operationId: deleteFact
+      summary: Delete fact
+      responses:
+        '204': {description: Deleted}
+
+  /api/projects/{projectId}/script:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [content]
+      operationId: getScript
+      summary: Current script version + word count/duration estimate + latest originality report
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Script'}
+    put:
+      tags: [content]
+      operationId: saveScript
+      summary: Save operator edits of the current (unapproved) version
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text, version]
+              properties: {text: {type: string}, version: {type: integer}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Script'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /api/projects/{projectId}/script/approve:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    post:
+      tags: [content]
+      operationId: approveScript
+      summary: «Утвердить» — re-checks originality of the edited text, completes step 4, queues step 5 (TTS text)
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StepState'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /api/projects/{projectId}/voice:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [media]
+      operationId: getVoice
+      summary: «Копировать текст для ElevenLabs» text + current voice track (duration, wpm, alignment quality)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Voice'}
+    post:
+      tags: [media]
+      operationId: uploadVoice
+      summary: Upload mp3 -> normalize (-16 LUFS) + align (queued)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: {type: string, contentMediaType: audio/mpeg}
+                model_id: {type: string, enum: [eleven_v4, eleven_v3], default: eleven_v4}
+                provider_plan: {type: string, enum: [free, starter, creator, pro, unknown], default: unknown}
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StepState'}
+
+  /api/projects/{projectId}/voice/accept-alignment:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    post:
+      tags: [media]
+      operationId: acceptAlignment
+      summary: Operator accepts a low-confidence alignment (anchored_ratio < 0.9)
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StepState'}
+
+  /api/projects/{projectId}/storyboard:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [content]
+      operationId: getStoryboard
+      summary: Get storyboard
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Storyboard'}
+    put:
+      tags: [content]
+      operationId: saveStoryboard
+      summary: Save an edited storyboard as a new version (schema + rule validation; images/preview/render become stale)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../../schemas/storyboard.schema.json'}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Storyboard'}
+        '422': {$ref: '#/components/responses/Invalid'}
+
+  /api/projects/{projectId}/images:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [media]
+      operationId: listImages
+      summary: One card per background slot (current asset, prompt, QA status, attempts)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/ImageSlot'}}
+
+  /api/projects/{projectId}/images/{slot}/regenerate:
+    parameters: [{$ref: '#/components/parameters/projectId'}, {$ref: '#/components/parameters/slot'}]
+    post:
+      tags: [media]
+      operationId: regenerateImage
+      summary: «Перегенерировать» / «Изменить промпт» (optional new prompt)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {prompt: {type: string}}
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ImageSlot'}
+
+  /api/projects/{projectId}/images/{slot}/upload:
+    parameters: [{$ref: '#/components/parameters/projectId'}, {$ref: '#/components/parameters/slot'}]
+    post:
+      tags: [media]
+      operationId: uploadImage
+      summary: «Загрузить свою» (e.g. from Flow); becomes the selected asset, qa_status=manual_approved
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: {type: string, contentMediaType: image/png}
+                license: {type: string, default: 'own:google-flow-output'}
+                is_photoreal: {type: boolean, default: false}
+                depicts_real_person: {type: boolean, default: false}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ImageSlot'}
+
+  /api/projects/{projectId}/preview:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [media]
+      operationId: getPreview
+      summary: Contact sheet + per-scene stills and comments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Preview'}
+
+  /api/projects/{projectId}/preview/comments:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    post:
+      tags: [media]
+      operationId: addSceneComment
+      summary: Add scene comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scene_id, text]
+              properties: {scene_id: {type: integer}, text: {type: string}}
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SceneComment'}
+
+  /api/projects/{projectId}/preview/apply-comments:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    post:
+      tags: [media]
+      operationId: applyComments
+      summary: LLM revises commented scenes -> new storyboard version -> affected images -> new contact sheet
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StepState'}
+
+  /api/projects/{projectId}/preview/approve:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    post:
+      tags: [media]
+      operationId: approvePreview
+      summary: Completes step 8, queues the full render (step 9)
+      responses:
+        '202':
+          description: Queued
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StepState'}
+
+  /api/projects/{projectId}/renders:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [media]
+      operationId: listRenders
+      summary: Renders with file URLs (player + «Скачать» link with ?download=1)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Render'}}
+
+  /api/projects/{projectId}/metadata:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [content]
+      operationId: getMetadata
+      summary: Get metadata
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '../../schemas/metadata.schema.json'}
+    put:
+      tags: [content]
+      operationId: saveMetadata
+      summary: Save metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../../schemas/metadata.schema.json'}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '../../schemas/metadata.schema.json'}
+
+  /api/projects/{projectId}/publish:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    post:
+      tags: [projects]
+      operationId: markPublished
+      summary: Manual publisher — operator pastes the YouTube URL after uploading in Studio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties: {url: {type: string, format: uri}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ProjectDetail'}
+        '409': {$ref: '#/components/responses/Conflict'}
+
+  /api/projects/{projectId}/costs:
+    parameters: [{$ref: '#/components/parameters/projectId'}]
+    get:
+      tags: [settings]
+      operationId: projectCosts
+      summary: Project costs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Costs'}
+
+  /api/costs:
+    get:
+      tags: [settings]
+      operationId: monthCosts
+      summary: Month-to-date spend vs monthly stop, by project and model
+      parameters:
+        - {name: month, in: query, schema: {type: string, pattern: '^[0-9]{4}-[0-9]{2}$'}}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Costs'}
+
+  /api/poses:
+    get:
+      tags: [library]
+      operationId: listPoses
+      summary: List poses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Pose'}}
+
+  /api/poses/sheets:
+    post:
+      tags: [library]
+      operationId: uploadPoseSheet
+      summary: Upload a pose sheet on #00FF00; chroma-key + split -> candidate poses (active=false)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties: {file: {type: string, contentMediaType: image/png}}
+      responses:
+        '202':
+          description: Candidates created
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Pose'}}
+
+  /api/poses/{poseId}:
+    parameters: [{name: poseId, in: path, required: true, schema: {type: string, format: uuid}}]
+    patch:
+      tags: [library]
+      operationId: updatePose
+      summary: Name / tag / activate a pose (rewrites library/poses/poses.json)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: {type: string, pattern: '^[a-z0-9_]{2,32}$'}
+                tags: {type: array, items: {type: string}}
+                active: {type: boolean}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Pose'}
+    delete:
+      tags: [library]
+      operationId: deletePose
+      summary: Delete pose
+      responses:
+        '204': {description: Deleted}
+
+  /api/settings:
+    get:
+      tags: [settings]
+      operationId: getSettings
+      summary: Get settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Settings'}
+    put:
+      tags: [settings]
+      operationId: saveSettings
+      summary: Save settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Settings'}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Settings'}
+
+components:
+  parameters:
+    projectId: {name: projectId, in: path, required: true, schema: {type: string, format: uuid}}
+    step:
+      name: step
+      in: path
+      required: true
+      schema: {$ref: '#/components/schemas/StepKey'}
+    slot: {name: slot, in: path, required: true, schema: {type: string, pattern: '^bg[0-9]{2}$'}}
+
+  responses:
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Conflict:
+      description: Not allowed in the current state (e.g. upstream step not done, checklist incomplete, version changed)
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Invalid:
+      description: Validation failed (schema or storyboard rules)
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+
+  schemas:
+    Error:
+      type: object
+      required: [detail]
+      properties:
+        detail: {type: string}
+        errors: {type: array, items: {type: string}}
+
+    StepKey:
+      type: string
+      enum: [source, idea, facts, script, voice, storyboard, images, preview, render, metadata]
+
+    StepState:
+      type: object
+      required: [step, status]
+      properties:
+        step: {$ref: '#/components/schemas/StepKey'}
+        status: {type: string, enum: [pending, running, waiting_operator, done, failed, stale]}
+        wait_reason: {type: [string, 'null'], enum: [choose_angle, approve_script, upload_voice, review_alignment, manual_images, approve_preview, budget_exceeded, confirm_similar_topic, null]}
+        progress: {type: [number, 'null']}
+        error: {type: [string, 'null']}
+        attempts: {type: integer}
+        updated_at: {type: string, format: date-time}
+
+    Project:
+      type: object
+      required: [id, title, status, language, target_seconds, cost_usd]
+      properties:
+        id: {type: string, format: uuid}
+        title: {type: string}
+        status: {type: string, enum: [active, waiting_operator, failed, ready, published, archived]}
+        language: {type: string, enum: [kk, ru, en]}
+        target_seconds: {type: integer, minimum: 180, maximum: 300}
+        target_words: {type: integer}
+        wpm_voice: {type: number}
+        duration: {type: [number, 'null'], description: 'Voice duration, s'}
+        cost_usd: {type: number}
+        budget_usd: {type: number}
+        sponsored: {type: boolean}
+        source_url: {type: [string, 'null']}
+        current_step: {$ref: '#/components/schemas/StepKey'}
+        created_at: {type: string, format: date-time}
+
+    ProjectDetail:
+      allOf:
+        - {$ref: '#/components/schemas/Project'}
+        - type: object
+          required: [steps]
+          properties:
+            steps: {type: array, items: {$ref: '#/components/schemas/StepState'}}
+            budget_warn_usd: {type: number}
+
+    ProjectCreate:
+      type: object
+      properties:
+        source_url: {type: string, format: uri}
+        transcript: {type: string, description: Pasted transcript (manual fallback)}
+        title: {type: string}
+        language: {type: string, enum: [kk, ru, en], default: kk}
+        target_seconds: {type: integer, minimum: 180, maximum: 300, default: 240}
+        sponsored: {type: boolean, default: false}
+      anyOf:
+        - required: [source_url]
+        - required: [transcript]
+
+    ProjectUpdate:
+      type: object
+      properties:
+        title: {type: string}
+        target_seconds: {type: integer, minimum: 180, maximum: 300}
+        sponsored: {type: boolean}
+        sponsor_name: {type: string}
+        budget_usd: {type: number, minimum: 0}
+        status: {type: string, enum: [archived, active]}
+
+    LogEntry:
+      type: object
+      properties:
+        id: {type: integer}
+        level: {type: string, enum: [debug, info, warning, error]}
+        message: {type: string}
+        created_at: {type: string, format: date-time}
+
+    Source:
+      type: object
+      properties:
+        source_url: {type: [string, 'null']}
+        yt_title: {type: [string, 'null']}
+        yt_duration: {type: [integer, 'null']}
+        yt_views: {type: [integer, 'null']}
+        origin: {type: string, enum: [yt_dlp, manual]}
+        transcript: {type: string}
+
+    Idea:
+      type: object
+      properties:
+        brief: {$ref: '../../schemas/brief.schema.json#/properties/brief'}
+        angles:
+          type: array
+          items:
+            type: object
+            properties:
+              id: {type: string, format: uuid}
+              chosen: {type: boolean}
+              is_custom: {type: boolean}
+              data: {$ref: '../../schemas/brief.schema.json#/$defs/angle'}
+
+    FactRow:
+      type: object
+      required: [id, fact]
+      properties:
+        id: {type: string, format: uuid}
+        fact: {$ref: '../../schemas/facts.schema.json#/$defs/fact'}
+        edited_by_operator: {type: boolean}
+
+    Script:
+      type: object
+      properties:
+        version: {type: integer}
+        llm_draft: {type: string}
+        text: {type: string}
+        approved: {type: boolean}
+        word_count: {type: integer}
+        target_words: {type: integer}
+        est_seconds: {type: number}
+        within_budget: {type: boolean, description: word_count within target_words +-8%}
+        data: {$ref: '../../schemas/script.schema.json'}
+        originality:
+          type: [object, 'null']
+          properties:
+            max_similarity: {type: number}
+            verdict: {type: string, enum: [pass, pass_after_rewrite, fail]}
+            flagged_sentences:
+              type: array
+              items:
+                type: object
+                properties:
+                  index: {type: integer}
+                  text: {type: string}
+                  similarity: {type: number}
+                  source_excerpt: {type: string, description: Added by the API for display only}
+
+    Voice:
+      type: object
+      properties:
+        tts_text: {type: [string, 'null']}
+        tts_chars: {type: integer}
+        tts_parts: {type: array, items: {type: string}, description: Split at sentence boundaries if > 5000 chars}
+        model_hint: {type: string, examples: ['Модель: Eleven v4 (или v3)']}
+        track:
+          type: [object, 'null']
+          properties:
+            url: {type: string}
+            duration: {type: number}
+            wpm_measured: {type: number}
+            alignment_ok: {type: boolean}
+            anchored_ratio: {type: number}
+
+    Storyboard:
+      type: object
+      properties:
+        version: {type: integer}
+        data: {$ref: '../../schemas/storyboard.schema.json'}
+        errors: {type: array, items: {type: string}}
+
+    ImageSlot:
+      type: object
+      properties:
+        slot: {type: string}
+        prompt: {type: string}
+        url: {type: [string, 'null']}
+        qa_status: {type: string, enum: [pending, passed, failed, needs_manual, manual_approved]}
+        qa_notes: {type: [string, 'null']}
+        attempts: {type: integer}
+        source: {type: string}
+        used_in_scenes: {type: array, items: {type: integer}}
+
+    SceneComment:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        scene_id: {type: integer}
+        text: {type: string}
+        resolved: {type: boolean}
+
+    Preview:
+      type: object
+      properties:
+        contact_sheet_url: {type: [string, 'null']}
+        storyboard_version: {type: integer}
+        scenes:
+          type: array
+          items:
+            type: object
+            properties:
+              scene_id: {type: integer}
+              still_url: {type: string}
+              start: {type: number}
+              end: {type: number}
+              text: {type: string}
+              comments: {type: array, items: {$ref: '#/components/schemas/SceneComment'}}
+
+    Render:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        kind: {type: string, enum: [preview, full, short]}
+        url: {type: [string, 'null']}
+        duration: {type: [number, 'null']}
+        checks: {type: object}
+        created_at: {type: string, format: date-time}
+
+    Pose:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        name: {type: string}
+        url: {type: string}
+        width: {type: integer}
+        height: {type: integer}
+        tags: {type: array, items: {type: string}}
+        active: {type: boolean}
+
+    Costs:
+      type: object
+      properties:
+        total_usd: {type: number}
+        limit_usd: {type: number, description: Project budget or monthly stop}
+        warn_usd: {type: number}
+        by_model: {type: object, additionalProperties: {type: number}}
+        entries:
+          type: array
+          items:
+            type: object
+            properties:
+              project_id: {type: [string, 'null']}
+              step: {type: [string, 'null']}
+              provider: {type: string}
+              model: {type: string}
+              units: {type: object}
+              usd: {type: number}
+              created_at: {type: string, format: date-time}
+
+    Settings:
+      type: object
+      description: Non-secret, operator-editable settings (table settings.data). Secrets stay in .env; `keys` is read-only presence info.
+      properties:
+        keys:
+          type: object
+          readOnly: true
+          properties:
+            gemini: {type: boolean}
+            database: {type: boolean}
+        models:
+          type: object
+          properties:
+            text: {type: string, default: gemini-3.8-flash}
+            script: {type: string, default: gemini-4-argon}
+            cheap: {type: string, default: gemini-3.5-flash-lite}
+            image: {type: string, default: gemini-nano-banana-2.1}
+            embed: {type: string, default: gemini-embedding-2}
+        script_writer: {type: string, enum: [gemini, claude_code], default: gemini}
+        style_suffix: {type: string}
+        target_seconds: {type: integer, minimum: 180, maximum: 300, default: 240}
+        wpm_voice: {type: number, default: 110}
+        similarity_threshold: {type: number, minimum: 0, maximum: 1, default: 0.8}
+        budget_project_usd: {type: number, default: 5}
+        budget_project_warn_usd: {type: number, default: 2.5}
+        budget_month_stop_usd: {type: number, default: 60}
+
+    Health:
+      type: object
+      properties:
+        db: {type: string, enum: [ok, unreachable]}
+        db_hint: {type: [string, 'null'], examples: ['Supabase project may be paused — open dashboard → Resume project']}
+        last_backup_at: {type: [string, 'null'], format: date-time}
+        tools: {type: object, additionalProperties: {type: boolean}}

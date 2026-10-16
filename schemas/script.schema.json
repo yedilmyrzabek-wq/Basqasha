@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://basqasha.local/schemas/script.schema.json",
+  "title": "Step 4 output: narration script",
+  "description": "Stored in script.data (text itself in script.llm_draft / script.text). Word budget: target_words = round(wpm_voice * target_seconds / 60), accepted range +-8%. Numbers are written as words. Words are counted by splitting on whitespace after stripping punctuation (a hyphenated word counts once).",
+  "type": "object",
+  "required": ["language", "text", "word_count", "target_words", "hook_type", "structure_id", "beats", "writer"],
+  "additionalProperties": false,
+  "properties": {
+    "language": {"enum": ["kk", "ru", "en"]},
+    "title": {"type": "string", "maxLength": 60},
+    "text": {"type": "string", "minLength": 50},
+    "word_count": {"type": "integer", "minimum": 1},
+    "target_words": {"type": "integer", "minimum": 1},
+    "wpm_voice": {"type": "number", "minimum": 60, "maximum": 200},
+    "est_seconds": {"type": "number", "minimum": 0},
+    "hook_type": {"enum": ["question", "number", "paradox", "scene", "myth"]},
+    "structure_id": {"type": "string", "pattern": "^[a-z0-9_]{3,40}$", "description": "Default 'beats8' (video_craft R4). Must differ from the previous project."},
+    "beats": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["beat", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "beat": {"type": "string", "description": "hook | context | beat_a | beat_b | beat_c | twist | payoff | outro (beats8) or the structure's own ids."},
+          "text": {"type": "string"},
+          "fact_ids": {"type": "array", "items": {"type": "string", "pattern": "^f[0-9]{2,3}$"}}
+        }
+      }
+    },
+    "writer": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"enum": ["gemini", "claude_code", "operator"]},
+        "model": {"type": "string"}
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "no_advice": {"type": "boolean", "description": "No health/finance/legal/political advice (monetization R2)."},
+        "max_sentence_words": {"type": "integer"},
+        "hook_words": {"type": "integer"}
+      }
+    }
+  }
+}
