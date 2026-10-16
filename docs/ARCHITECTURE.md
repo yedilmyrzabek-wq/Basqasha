@@ -82,3 +82,6 @@ A step runs only when all earlier steps are `done`. When a step finishes `done`,
 4. **Similarity threshold:** 0.8 is a placeholder until it is calibrated on ≥ 20 labelled kk pairs (tools_costs R8).
 5. **Example data:** `/schemas/examples` facts and URLs are illustrative, not verified, and must not be reused as real facts.
 6. The brief §6.5 example has a scene-level `caption_keyword`. Rule 12 (one keyword per 2–7-word phrase) needs the optional `captions[]` split, which was added.
+
+
+> **LEAD note 2026-10-17:** the owner decided **no DB backups** — skip pg_dump / weekly backup / backup banner. Keep only the Supabase keep-alive (`SELECT 1` on start/daily) and the "project may be paused" message.
