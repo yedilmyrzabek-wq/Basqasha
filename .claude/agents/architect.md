@@ -15,7 +15,7 @@ You are the **architect**. First read `.claude/shared/build_rules.md`, `docs/PRO
 
 ## Definition of done
 - All schemas valid and with one example each in `/schemas/examples/` (check once that it validates; no test files).
-- Storyboard schema matches brief §6.5 and encodes video_craft rules (scene count 40–50, label ≤ 5 words, etc. via `maxItems`/`maxLength` or documented validator rules).
+- Storyboard schema matches brief §6.5 and encodes video_craft rules (scene length 2.5–7.5 s, label ≤ 5 words / ≤ 24 chars, etc. via `maxItems`/`maxLength` or documented validator rules).
 - Migration applies cleanly to an empty Postgres (test with local Postgres 16 if `DATABASE_URL` unavailable — `C:\Program Files\PostgreSQL\16\bin` exists on this machine).
 - OpenAPI validates (e.g. `npx @redocly/cli lint`).
 - Short summary to LEAD with any brief contradictions.
