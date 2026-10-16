@@ -19,9 +19,11 @@ LEAD (оркестратор) — основная сессия Claude Code. К�
 | Node 22.16 | ✅ |
 | uv | ✅ (Python 3.12 поставит uv) |
 | Python | 3.11 системный → проект на 3.12 через `uv` |
-| ffmpeg | ❌ нет в PATH — нужен к P2 |
+| ffmpeg | ✅ 9.0.2 portable в `%USERPROFILE%	oolsfmpegbin` (добавлен в user PATH; в новых терминалах) |
 | yt-dlp | ❌ — ставится как Python-зависимость backend |
-| git | ✅ репозиторий инициализирован |
+| git | ✅ репозиторий, вся работа в ветке `main-agent` (без push) |
+| GPU | NVIDIA RTX 3050 Laptop 4 GB → faster-whisper large-v3 `int8_float16` на CUDA (впритык), fallback CPU `int8` |
+| Ключи | Gemini API key и Supabase DATABASE_URL есть у владельца → в `.env` после появления `.env.example` |
 | MCP | vidIQ ✅, chrome-devtools ✅ (вместо Playwright MCP для QA); Supabase MCP ❌ |
 
 ## 2. Фазы и критерии приёмки (из брифа §6.6, §8)
