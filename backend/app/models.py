@@ -10,7 +10,7 @@ from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import (BigInteger, Boolean, Computed, Date, DateTime, FetchedValue, ForeignKey,
-                        Integer, Numeric, Real, SmallInteger, Text)
+                        Integer, Numeric, REAL, SmallInteger, Text)
 from sqlalchemy.dialects.postgresql import ARRAY, ENUM, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -82,7 +82,7 @@ class ProjectStep(Base):
     status: Mapped[str] = mapped_column(StepStatusE, server_default=DB)
     wait_reason: Mapped[str | None] = mapped_column(Text)
     attempts: Mapped[int] = mapped_column(Integer, server_default=DB)
-    progress: Mapped[float | None] = mapped_column(Real)
+    progress: Mapped[float | None] = mapped_column(REAL)
     error: Mapped[str | None] = mapped_column(Text)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -134,7 +134,7 @@ class Script(Base):
     text: Mapped[str] = mapped_column(Text)
     data: Mapped[dict] = mapped_column(JSONB, default=dict)
     word_count: Mapped[int] = mapped_column(Integer, default=0)
-    edit_ratio: Mapped[float | None] = mapped_column(Real)
+    edit_ratio: Mapped[float | None] = mapped_column(REAL)
     tts_text: Mapped[str | None] = mapped_column(Text)
     approved: Mapped[bool] = mapped_column(Boolean, default=False)
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -147,7 +147,7 @@ class OriginalityReport(Base):
     __mapper_args__ = {"eager_defaults": True}
     id: Mapped[uuid.UUID] = uuid_pk()
     script_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("script.id", ondelete="CASCADE"))
-    max_similarity: Mapped[float] = mapped_column(Real)
+    max_similarity: Mapped[float] = mapped_column(REAL)
     verdict: Mapped[str] = mapped_column(Text)
     flagged_sentences: Mapped[list] = mapped_column(JSONB, default=list)
     data: Mapped[dict] = mapped_column(JSONB, default=dict)
@@ -162,12 +162,12 @@ class VoiceTrack(Base):
     script_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("script.id", ondelete="CASCADE"))
     upload_path: Mapped[str] = mapped_column(Text)
     path: Mapped[str | None] = mapped_column(Text)
-    duration: Mapped[float | None] = mapped_column(Real)
+    duration: Mapped[float | None] = mapped_column(REAL)
     words_json: Mapped[dict | None] = mapped_column(JSONB)
     provider: Mapped[str] = mapped_column(Text, default="manual_upload")
     provider_plan: Mapped[str] = mapped_column(Text, default="unknown")
     model_id: Mapped[str] = mapped_column(Text, default="eleven_v4")
-    wpm_measured: Mapped[float | None] = mapped_column(Real)
+    wpm_measured: Mapped[float | None] = mapped_column(REAL)
     alignment_ok: Mapped[bool | None] = mapped_column(Boolean)
     is_current: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = created()
@@ -240,7 +240,7 @@ class Render(Base):
         UUID(as_uuid=True), ForeignKey("storyboard.id", ondelete="SET NULL"))
     path: Mapped[str | None] = mapped_column(Text)
     props_path: Mapped[str | None] = mapped_column(Text)
-    duration: Mapped[float | None] = mapped_column(Real)
+    duration: Mapped[float | None] = mapped_column(REAL)
     checks: Mapped[dict] = mapped_column(JSONB, default=dict)
     created_at: Mapped[datetime] = created()
 
