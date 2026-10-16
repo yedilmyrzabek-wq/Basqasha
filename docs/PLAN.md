@@ -23,7 +23,7 @@ LEAD (оркестратор) — основная сессия Claude Code. К�
 | yt-dlp | ❌ — ставится как Python-зависимость backend |
 | git | ✅ репозиторий, вся работа в ветке `main-agent` (без push) |
 | GPU | NVIDIA RTX 3050 Laptop 4 GB (ASR не используем — решение владельца) |
-| Ключи | Gemini API key и Supabase DATABASE_URL есть у владельца → в `.env` после появления `.env.example` |
+| Ключи | ✅ `.env` заполнен и проверен 2026-10-17: Supabase (PostgreSQL 17.11, Session pooler :5432, ap-southeast-1) и Gemini (63 модели; есть `gemini-4-argon`, `gemini-3.8-flash`, `gemini-3.5-flash-lite`, `gemini-nano-banana-2.1`, `gemini-embedding-2`, `gemini-3.5-transcribe`) |
 | MCP | vidIQ ✅, chrome-devtools ✅ (вместо Playwright MCP для QA); Supabase MCP ❌ |
 
 ## 2. Фазы и критерии приёмки (из брифа §6.6, §8)
