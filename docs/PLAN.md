@@ -19,7 +19,7 @@ LEAD (оркестратор) — основная сессия Claude Code. К�
 | Node 22.16 | ✅ |
 | uv | ✅ (Python 3.12 поставит uv) |
 | Python | 3.11 системный → проект на 3.12 через `uv` |
-| ffmpeg | ✅ 9.0.2 portable в `%USERPROFILE%	oolsfmpegbin` (добавлен в user PATH; в новых терминалах) |
+| ffmpeg | ✅ 9.0.2 portable в `%USERPROFILE%/tools/ffmpeg/bin` (добавлен в user PATH; виден в новых терминалах) |
 | yt-dlp | ❌ — ставится как Python-зависимость backend |
 | git | ✅ репозиторий, вся работа в ветке `main-agent` (без push) |
 | GPU | NVIDIA RTX 3050 Laptop 4 GB → faster-whisper large-v3 `int8_float16` на CUDA (впритык), fallback CPU `int8` |
