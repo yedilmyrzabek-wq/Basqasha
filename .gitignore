@@ -1,0 +1,32 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# runtime data (media lives only on local disk)
+/data/
+/library/**/generated/
+*.sqlite
+*.sqlite3
+huey*.db
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# node
+node_modules/
+dist/
+/engine/out/
+/engine/build/
+
+# misc
+docs/*.zip
+.DS_Store
+Thumbs.db
+.claude/settings.local.json
+.claude/worktrees/
