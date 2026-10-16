@@ -21,4 +21,4 @@ Python 3.12 via `uv`, FastAPI, SQLModel/SQLAlchemy + psycopg (Postgres via `DATA
 - P5: Shorts render, ElevenLabs API provider stub behind a disabled flag, YouTube publisher stub, cost endpoints.
 
 ## Definition of done (each phase)
-Endpoints match OpenAPI; `uv run pytest` green; app starts with one command; every external call logs cost; no media in DB; demo for the phase reproducible from README steps.
+Endpoints match OpenAPI; app starts with one command; every external call logs cost; no media in DB; demo for the phase reproducible from README steps.

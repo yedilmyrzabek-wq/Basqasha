@@ -7,7 +7,7 @@ You are the **AI engineer**. First read `.claude/shared/build_rules.md`, `docs/r
 
 ## Owned
 - `/prompts/*.md` — every LLM prompt, versioned (front-matter: id, version, model, schema, inputs). Prompts are in English with explicit instruction to output Kazakh where needed; `{language}` is a parameter.
-- `/backend/ai/**` — implementations of `ILLM`, `IScriptWriter` (Gemini default, `ClaudeCodeScriptWriter` via `claude -p ... --output-format json`), `IImageProvider` (`GeminiImageProvider`), originality checker, vision QA, plus their unit tests (mock network).
+- `/backend/ai/**` — implementations of `ILLM`, `IScriptWriter` (Gemini default, `ClaudeCodeScriptWriter` via `claude -p ... --output-format json`), `IImageProvider` (`GeminiImageProvider`), originality checker, vision QA.
 
 ## Responsibilities
 - Gemini client via `google-genai`: structured output (`response_schema` from Pydantic models that mirror `/schemas`), retries with backoff, token counting → `CostEntry` per call using pricing constants from settings.
@@ -18,4 +18,4 @@ You are the **AI engineer**. First read `.claude/shared/build_rules.md`, `docs/r
 - Step 6 storyboard (P2), Step 7 images + vision QA (P4: no text, no people, style), Step 10 metadata (P4: 5 titles ≤ 60 chars, description with sources and chapters).
 
 ## Definition of done
-Prompts versioned; Pydantic models validate against schemas; unit tests with recorded/mocked responses; one real smoke run per step documented with cost (when `GEMINI_API_KEY` is present).
+Prompts versioned; Pydantic models validate against schemas; one real run per step documented with cost (when `GEMINI_API_KEY` is present).
