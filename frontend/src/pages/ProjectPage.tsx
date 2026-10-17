@@ -6,6 +6,7 @@ import { api, unwrap, type ProjectDetail, type StepKey, type StepState } from '@
 import { useInvalidateProject, useProject, useRunStep, useStepLogs } from '@/api/hooks'
 import { ErrorBox, Loading, Notice, StepStatusBadge } from '@/components/common'
 import { MinutesInput } from '@/components/MinutesInput'
+import { ProjectActions, StopButton } from '@/components/ProjectActions'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -17,7 +18,7 @@ import { STEP_VIEWS } from '@/steps'
 function ProjectHeader({ project }: { project: ProjectDetail }) {
   const invalidate = useInvalidateProject(project.id)
   const patch = useMutation({
-    mutationFn: (body: { target_seconds?: number; status?: 'archived' | 'active' }) =>
+    mutationFn: (body: { target_seconds?: number }) =>
       unwrap(api.PATCH('/api/projects/{projectId}', { params: { path: { projectId: project.id } }, body })),
     onSettled: invalidate,
   })
@@ -59,14 +60,8 @@ function ProjectHeader({ project }: { project: ProjectDetail }) {
               </a>
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={patch.isPending}
-            onClick={() => patch.mutate({ status: project.status === 'archived' ? 'active' : 'archived' })}
-          >
-            {project.status === 'archived' ? 'Вернуть из архива' : 'В архив'}
-          </Button>
+          {project.steps?.some((s) => s.status === 'running') && <StopButton projectId={project.id} />}
+          <ProjectActions project={project} />
         </div>
       </div>
       <ErrorBox error={patch.error} className="mt-2" />
@@ -222,6 +217,7 @@ function StepPanel({ project, step }: { project: ProjectDetail; step: StepKey })
           </div>
           <p className="text-sm text-muted-foreground">{meta.hint}</p>
         </div>
+        {state.status === 'running' && <StopButton projectId={project.id} />}
         <Button
           variant="outline"
           size="sm"

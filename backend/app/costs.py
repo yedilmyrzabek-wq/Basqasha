@@ -10,7 +10,7 @@ from typing import Mapping
 
 from sqlalchemy import func, select
 
-from app import app_settings
+from app import app_settings, cancel
 from app.db import session_scope
 from app.models import CostEntry, JobLog, Pricing, Project
 from app.providers.interfaces import BudgetExceeded, CallContext
@@ -109,6 +109,7 @@ class CostLedger:
             if missing:
                 db.add(JobLog(project_id=ctx.project_id, step=ctx.step, level="warning",
                               message=f"No pricing row for {', '.join(missing)}; recorded without it"))
+        cancel.check()  # «Остановить»: checkpoint after every paid / AI call, once the spend is committed
         return usd
 
 

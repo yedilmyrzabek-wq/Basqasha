@@ -16,6 +16,7 @@ from typing import Any, Callable
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app import cancel
 from app.db import session_scope
 from app.models import STEP_KEYS, JobLog, Project, ProjectStep
 from app.providers.interfaces import BudgetExceeded, OperatorActionRequired
@@ -159,6 +160,7 @@ def request_run(db: Session, project_id: uuid.UUID, step: str, *, task: str = "r
     if ps.status == "running":
         raise StepConflict(f"Step '{step}' is already running")
     ps.status, ps.wait_reason, ps.error, ps.progress = "running", None, None, None
+    cancel.clear(project_id)  # a new run starts fresh even if an old «Остановить» flag is left
     invalidate_after(db, project_id, step)
     job_log(db, project_id, step, "Queued" if task == "run" else f"Queued: {task}")
     refresh_project_status(db, project_id)
@@ -185,10 +187,26 @@ def queue_next(project_id: uuid.UUID, step: str) -> None:
 
 # ------------------------------------------------------------------ execution (worker side)
 def execute(project_id: uuid.UUID, step: str, fn: Handler) -> None:
+    with cancel.bound(project_id):
+        _execute(project_id, step, fn)
+
+
+def _stopped(project_id: uuid.UUID, step: str) -> None:
+    cancel.clear(project_id)
+    with session_scope() as db:
+        set_state(db, project_id, step, "failed", error=cancel.STOPPED)
+        job_log(db, project_id, step, "Stopped by the operator", "warning")
+
+
+def _execute(project_id: uuid.UUID, step: str, fn: Handler) -> None:
     with session_scope() as db:
         if db.get(Project, project_id) is None:
             log.info("Project %s was deleted; skipping queued step %s", project_id, step)
             return
+    if cancel.requested(project_id):  # stopped while it was still waiting in the queue
+        _stopped(project_id, step)
+        return
+    with session_scope() as db:
         ps = get_step(db, project_id, step)
         ps.status, ps.started_at, ps.attempts = "running", now(), (ps.attempts or 0) + 1
         ps.error = ps.wait_reason = None
@@ -196,6 +214,9 @@ def execute(project_id: uuid.UUID, step: str, fn: Handler) -> None:
         job_log(db, project_id, step, f"Started (attempt {ps.attempts})")
     try:
         result = fn(project_id)
+    except cancel.Cancelled:
+        _stopped(project_id, step)
+        return
     except BudgetExceeded as e:
         with session_scope() as db:
             set_state(db, project_id, step, "waiting_operator", wait_reason="budget_exceeded", error=str(e))
@@ -212,15 +233,18 @@ def execute(project_id: uuid.UUID, step: str, fn: Handler) -> None:
             job_log(db, project_id, step, f"Failed: {type(e).__name__}: {e}", "error",
                     {"traceback": traceback.format_exc()[-6000:]})
         return
-    finish(project_id, step, result)
+    # finished just as «Остановить» was pressed: keep the result, but do not start the next step
+    stop = cancel.requested(project_id)
+    cancel.clear(project_id)
+    finish(project_id, step, result, queue=not stop)
 
 
-def finish(project_id: uuid.UUID, step: str, result: StepResult) -> None:
+def finish(project_id: uuid.UUID, step: str, result: StepResult, queue: bool = True) -> None:
     with session_scope() as db:
         set_state(db, project_id, step, result.status, wait_reason=result.wait_reason)
         msg = "Done" if result.status == "done" else f"Waiting for operator: {result.wait_reason}"
         job_log(db, project_id, step, msg)
-    if result.status == "done":
+    if result.status == "done" and queue:
         queue_next(project_id, step)
 
 

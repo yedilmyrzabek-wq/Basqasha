@@ -9,6 +9,7 @@ import threading
 from pathlib import Path
 from typing import Any, Callable
 
+from app import cancel
 from app.config import get_settings
 from app.media.props import asset_root
 
@@ -39,6 +40,7 @@ def _run(script: str, args: list[str], on_line: Callable[[dict[str, Any]], None]
     t.start()
     timer = threading.Timer(TIMEOUT_S, p.kill)
     timer.start()
+    done = cancel.watch(p)  # «Остановить» kills node + its Chrome
     lines: list[dict[str, Any]] = []
     try:
         for raw in p.stdout:
@@ -53,8 +55,10 @@ def _run(script: str, args: list[str], on_line: Callable[[dict[str, Any]], None]
             on_line(obj)
         p.wait()
     finally:
+        done.set()
         timer.cancel()
         t.join(timeout=5)
+    cancel.check()
     if p.returncode != 0:
         raise EngineError(f"{script} exited {p.returncode}: {''.join(err)[-3000:]}")
     return lines

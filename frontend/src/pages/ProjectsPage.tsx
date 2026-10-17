@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input, Label, Textarea } from '@/components/ui/input'
 import { PROJECT_STATUS, stepTitle } from '@/lib/steps'
 import { MinutesInput } from '@/components/MinutesInput'
+import { ProjectActions } from '@/components/ProjectActions'
 import { cn, fmtDate, fmtDuration, fmtUsd } from '@/lib/utils'
 
 function NewProjectForm({ onClose }: { onClose: () => void }) {
@@ -145,7 +146,7 @@ export default function ProjectsPage() {
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2 text-sm text-muted-foreground">
             <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
-            Показать архив
+            Показать архив{(projects.data ?? []).some((p) => p.status === 'archived') ? ` (${(projects.data ?? []).filter((p) => p.status === 'archived').length})` : ''}
           </label>
           {!creating && (
             <Button variant="accent" onClick={() => setCreating(true)}>
@@ -174,6 +175,7 @@ export default function ProjectsPage() {
                 <th className="px-4 py-2.5 text-right font-medium">Длительность</th>
                 <th className="px-4 py-2.5 text-right font-medium">Стоимость</th>
                 <th className="px-4 py-2.5 text-right font-medium">Создан</th>
+                <th className="px-2 py-2.5" />
               </tr>
             </thead>
             <tbody>
@@ -207,6 +209,9 @@ export default function ProjectsPage() {
                       {p.budget_usd != null && <span className="text-muted-foreground"> / {fmtUsd(p.budget_usd)}</span>}
                     </td>
                     <td className="px-4 py-2.5 text-right text-muted-foreground">{fmtDate(p.created_at)}</td>
+                    <td className="px-2 py-1.5">
+                      <ProjectActions project={p} compact />
+                    </td>
                   </tr>
                 )
               })}

@@ -10,11 +10,11 @@ from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import app_settings
+from app import app_settings, cancel
 from app.api.common import get_project, list_projects as list_all, project_detail, step_state
 from app.api.routers import source as source_router
 from app.db import get_db, get_read_db
-from app.models import STEP_KEYS, JobLog, Project
+from app.models import STEP_KEYS, JobLog, Project, ProjectStep
 from app.pipeline import orchestrator
 from app.storage import project_dir
 
@@ -98,11 +98,28 @@ def update_project(project_id: uuid.UUID, body: ProjectUpdate, db: Session = Dep
 @router.delete("/{project_id}", status_code=204)
 def delete_project(project_id: uuid.UUID, delete_files: bool = False, db: Session = Depends(get_db)):
     p = get_project(db, project_id)
+    if db.scalar(select(ProjectStep.step).where(ProjectStep.project_id == project_id,
+                                                ProjectStep.status == "running").limit(1)):
+        raise orchestrator.StepConflict("Проект сейчас работает — сначала нажмите «Остановить»")
     db.delete(p)
     db.flush()
     if delete_files:
         shutil.rmtree(project_dir(project_id), ignore_errors=True)
     return Response(status_code=204)
+
+
+@router.post("/{project_id}/stop", status_code=202, tags=["steps"])
+def stop_project(project_id: uuid.UUID, db: Session = Depends(get_db)):
+    """«Остановить»: the running step ends within a second or two (see app/cancel.py)."""
+    get_project(db, project_id)
+    running = db.scalars(select(ProjectStep.step).where(ProjectStep.project_id == project_id,
+                                                        ProjectStep.status == "running")).all()
+    if not running:
+        raise orchestrator.StepConflict("Nothing is running")
+    cancel.request(project_id)
+    for step in running:
+        orchestrator.job_log(db, project_id, step, "Stop requested by the operator", "warning")
+    return {"stopping": list(running)}
 
 
 # ------------------------------------------------------------------ steps

@@ -21,6 +21,7 @@ from typing import Sequence, TypeVar
 from pydantic import BaseModel, ValidationError
 
 from ai.gemini import GeminiLLM, ModelUnavailable
+from app import cancel
 from app.providers.interfaces import CallContext, ICostLedger, LLMResult
 
 log = logging.getLogger("ai.claude_cli")
@@ -104,8 +105,7 @@ class ClaudeCodeLLM:
 
     def _run(self, cmd: list[str], prompt: str) -> dict:
         try:
-            proc = subprocess.run(cmd, input=prompt, text=True, encoding="utf-8", capture_output=True,
-                                  timeout=self.timeout_s, cwd=self.workdir)
+            proc = cancel.run(cmd, input=prompt, timeout=self.timeout_s, cwd=self.workdir)
         except subprocess.TimeoutExpired as e:
             raise ModelUnavailable(f"claude timed out after {self.timeout_s}s") from e
         try:

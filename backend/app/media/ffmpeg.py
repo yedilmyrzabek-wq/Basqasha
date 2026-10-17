@@ -8,6 +8,7 @@ import subprocess
 from functools import lru_cache
 from pathlib import Path
 
+from app import cancel
 from app.config import get_settings
 
 _SIL_START = re.compile(r"silence_start:\s*(-?[\d.]+)")
@@ -29,7 +30,7 @@ def _bin(name: str) -> str:
 
 
 def _run(args: list[str], timeout: int = 600) -> subprocess.CompletedProcess:
-    r = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
+    r = cancel.run(args, timeout=timeout)
     if r.returncode != 0:
         raise RuntimeError(f"{Path(args[0]).name} failed ({r.returncode}): {r.stderr[-1500:]}")
     return r

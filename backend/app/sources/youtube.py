@@ -10,6 +10,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
+from app import cancel
 from app.config import get_settings
 
 TIMEOUT_S = 60
@@ -86,8 +87,7 @@ def run_subs(url: str, out_dir: Path, client: str | None, langs: str) -> subproc
            "-o", str(out_dir / "yt.%(ext)s"), url]
     if client:
         cmd[3:3] = ["--extractor-args", f"youtube:player_client={client}"]
-    return subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                          timeout=TIMEOUT_S)
+    return cancel.run(cmd, timeout=TIMEOUT_S)
 
 
 def last_error(stderr: str | None) -> str:
@@ -131,8 +131,8 @@ def fetch_subs(url: str, out_dir: Path, attempts: tuple = ATTEMPTS) -> dict:
 
 def run(args: list[str], timeout: int = 180) -> subprocess.CompletedProcess:
     """Any yt-dlp call (e.g. a channel's flat playlist)."""
-    return subprocess.run([sys.executable, "-m", "yt_dlp", "--js-runtimes", js_runtime_arg(), "--no-progress", *args],
-                          capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
+    return cancel.run([sys.executable, "-m", "yt_dlp", "--js-runtimes", js_runtime_arg(), "--no-progress", *args],
+                      timeout=timeout)
 
 
 def download(url: str, out: Path) -> Path | None:
