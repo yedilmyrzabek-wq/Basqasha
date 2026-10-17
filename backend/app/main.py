@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import OperationalError
 
 from app import app_settings
-from app.api.routers import content, media, ops, projects, source
+from app.api.routers import content, media, ops, production, projects, source
 from app.config import get_settings
 from app.db import session_scope
 from app.pipeline import steps  # noqa: F401 - registers step handlers
@@ -27,12 +27,22 @@ app.add_middleware(
     allow_origins=[f"http://localhost:{cfg.frontend_port}", f"http://127.0.0.1:{cfg.frontend_port}"],
     allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
-for r in (projects.router, source.router, content.router, media.router, ops.router):
+for r in (projects.router, source.router, content.router, media.router, production.router, ops.router):
     app.include_router(r)
 
 cfg.data_path.mkdir(parents=True, exist_ok=True)
 app.mount("/files/data", StaticFiles(directory=cfg.data_path, check_dir=False), name="data")
 app.mount("/files/library", StaticFiles(directory=cfg.library_path, check_dir=False), name="library")
+
+
+@app.middleware("http")
+async def _download(request: Request, call_next):
+    """/files/...?download=1 -> Content-Disposition: attachment («Скачать» in the UI)."""
+    response = await call_next(request)
+    if request.url.path.startswith("/files/") and request.query_params.get("download") == "1":
+        name = request.url.path.rsplit("/", 1)[-1]
+        response.headers["Content-Disposition"] = f'attachment; filename="{name}"'
+    return response
 
 
 @app.exception_handler(StepConflict)

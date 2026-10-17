@@ -20,9 +20,12 @@ def run_step_task(project_id: str, step: str) -> None:
 
 @huey.task()
 def operator_task(project_id: str, step: str, task: str) -> None:
-    """Long operator actions (e.g. script approve re-checks originality)."""
+    """Long operator actions (e.g. script approve re-checks originality). ``task`` may carry one
+    argument after a colon, e.g. "regenerate_image:bg03"."""
     from app.pipeline import operator_actions, orchestrator
-    orchestrator.execute(uuid.UUID(project_id), step, operator_actions.ACTIONS[task])
+    name, _, arg = task.partition(":")
+    fn = operator_actions.ACTIONS[name]
+    orchestrator.execute(uuid.UUID(project_id), step, (lambda pid: fn(pid, arg)) if arg else fn)
 
 
 @huey.periodic_task(crontab(hour="*/12", minute="7"))

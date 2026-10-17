@@ -11,6 +11,8 @@ from app.models import Project, Script
 from app.pipeline import ai_bridge, originality_feed
 from app.pipeline.orchestrator import DONE, StepResult, job_log
 from app.pipeline.steps.s04_script import save_report
+from app.pipeline.steps.s06_storyboard import apply_comments
+from app.pipeline.steps.s07_images import regenerate
 from app.providers.interfaces import CallContext
 from app.storage import project_dir, write_text
 from app.text import count_words, edit_ratio, sync_beats
@@ -57,4 +59,4 @@ def approve_script(project_id: uuid.UUID) -> StepResult:
     return DONE
 
 
-ACTIONS = {"approve_script": approve_script}
+ACTIONS = {"approve_script": approve_script, "apply_comments": apply_comments, "regenerate_image": regenerate}

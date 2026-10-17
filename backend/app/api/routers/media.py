@@ -1,18 +1,20 @@
-"""Voice (step 5 text + current track) and the pose library (read side; P2/P4 add uploads)."""
+"""Voice (step 5: text for ElevenLabs, mp3 upload, alignment review) and the pose library (read side)."""
 from __future__ import annotations
 
 import json
 import uuid
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.api.common import get_project, step_state
 from app.config import get_settings
-from app.db import get_read_db
+from app.db import get_db, get_read_db
 from app.models import Pose, Script, VoiceTrack
-from app.pipeline import ai_bridge
+from app.pipeline import ai_bridge, orchestrator
+from app.pipeline.steps.s05_voice import save_upload
 from app.storage import file_url
 
 router = APIRouter(prefix="/api", tags=["media"])
@@ -38,6 +40,31 @@ def get_voice(project_id: uuid.UUID, db: Session = Depends(get_read_db)):
                         "wpm_measured": track.wpm_measured, "alignment_ok": track.alignment_ok,
                         "anchored_ratio": quality.get("anchored_ratio")}
     return out
+
+
+@router.post("/projects/{project_id}/voice", status_code=202)
+def upload_voice(project_id: uuid.UUID, file: UploadFile = File(...),
+                 model_id: Literal["eleven_v4", "eleven_v3"] = Form("eleven_v4"),
+                 provider_plan: Literal["free", "starter", "creator", "pro", "unknown"] = Form("unknown"),
+                 db: Session = Depends(get_db)):
+    get_project(db, project_id)
+    orchestrator.check_can_run(db, project_id, "voice")
+    if orchestrator.get_step(db, project_id, "voice").status == "running":
+        raise orchestrator.StepConflict("Voice step is running; wait for it to finish")
+    try:
+        save_upload(project_id, file.file.read(), model_id, provider_plan)
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from e
+    return step_state(orchestrator.request_run(db, project_id, "voice"))
+
+
+@router.post("/projects/{project_id}/voice/accept-alignment", status_code=202)
+def accept_alignment(project_id: uuid.UUID, db: Session = Depends(get_db)):
+    ps = orchestrator.get_step(db, project_id, "voice")
+    if not (ps.status == "waiting_operator" and ps.wait_reason == "review_alignment"):
+        raise orchestrator.StepConflict(f"Voice is not waiting for an alignment review (status {ps.status})")
+    orchestrator.complete_by_operator(db, project_id, "voice", "Alignment accepted by the operator")
+    return step_state(orchestrator.get_step(db, project_id, "voice"))
 
 
 def _library_poses() -> list[dict[str, Any]]:

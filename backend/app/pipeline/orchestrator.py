@@ -23,8 +23,8 @@ from app.providers.interfaces import BudgetExceeded, OperatorActionRequired
 log = logging.getLogger(__name__)
 
 INVALIDATABLE = ("done", "waiting_operator", "failed")
-# storyboard / image changes do not touch metadata
-KEEP_METADATA_FROM = ("storyboard", "images")
+# storyboard / image changes (and the preview / render re-runs they cause) do not touch metadata
+KEEP_METADATA_FROM = ("storyboard", "images", "preview", "render")
 
 
 class StepConflict(Exception):
@@ -105,11 +105,17 @@ def set_state(db: Session, project_id: uuid.UUID, step: str, status: str, *,
     ps.status, ps.wait_reason, ps.error = status, wait_reason, error
     if status in ("done", "failed", "waiting_operator"):
         ps.finished_at = now()
-    if status == "done":
+    if status in ("done", "waiting_operator"):
         ps.progress = None
     db.flush()
     refresh_project_status(db, project_id)
     return ps
+
+
+def set_progress(project_id: uuid.UUID, step: str, progress: float) -> None:
+    """Worker-side progress (0..1) for long steps (images, stills, render)."""
+    with session_scope() as db:
+        get_step(db, project_id, step).progress = round(min(max(progress, 0.0), 1.0), 3)
 
 
 def invalidate_after(db: Session, project_id: uuid.UUID, step: str) -> list[str]:

@@ -25,8 +25,11 @@ def build(project_id: uuid.UUID | None = None):
         "model_text": m["text"], "model_script": m["script"], "model_cheap": m["cheap"],
         "model_image": m["image"], "model_embed": m["embed"]})
     kw: dict[str, Any] = {}
-    if "similarity_threshold" in inspect.signature(build_ai).parameters:
+    params = inspect.signature(build_ai).parameters
+    if "similarity_threshold" in params:
         kw["similarity_threshold"] = float(cfg["similarity_threshold"])
+    if "style_suffix" in params and cfg.get("style_suffix"):
+        kw["style_suffix"] = cfg["style_suffix"]
     return build_ai(ledger, settings, wpm=wpm, script_writer=cfg["script_writer"], **kw)
 
 

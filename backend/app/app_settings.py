@@ -24,6 +24,7 @@ def defaults() -> dict[str, Any]:
         "models": {"text": s.model_text, "script": s.model_script, "cheap": s.model_cheap,
                    "image": s.model_image, "embed": s.model_embed},
         "script_writer": s.script_writer,
+        "image_source": "gemini",   # gemini | samples (placeholder backgrounds, no image billing)
         "style_suffix": STYLE_SUFFIX,
         "target_seconds": s.default_target_seconds,
         "wpm_voice": s.default_wpm_voice,
