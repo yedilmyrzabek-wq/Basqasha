@@ -88,6 +88,16 @@ function SettingsForm({ initial }: { initial: Settings }) {
               <option value="claude_code">Claude Code (подписка, CLI)</option>
             </Select>
           </Field>
+          <Field label="Откуда брать фоны" htmlFor="image-source">
+            <Select
+              id="image-source"
+              value={String((s as Record<string, unknown>).image_source ?? 'gemini')}
+              onChange={(e) => setS({ ...s, image_source: e.target.value } as Settings)}
+            >
+              <option value="gemini">Gemini (нужен платный тариф)</option>
+              <option value="samples">Тестовые фоны из библиотеки</option>
+            </Select>
+          </Field>
         </CardContent>
       </Card>
 

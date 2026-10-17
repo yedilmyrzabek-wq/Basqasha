@@ -116,6 +116,32 @@ function SlotCard({ projectId, slot }: { projectId: string; slot: Slot }) {
   )
 }
 
+/** Placeholder backgrounds from library/style/samples — lets a project reach the video without image billing. */
+function SamplesBar({ projectId, disabled }: { projectId: string; disabled: boolean }) {
+  const invalidate = useInvalidateProject(projectId)
+  const fill = useMutation({
+    mutationFn: async (allSlots: boolean) => {
+      const r = await fetch(`/api/projects/${projectId}/images/use-samples?all_slots=${allSlots}`, { method: 'POST' })
+      if (!r.ok) throw new Error((await r.text()) || `HTTP ${r.status}`)
+    },
+    onSettled: invalidate,
+  })
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Button size="sm" variant="outline" disabled={disabled || fill.isPending} onClick={() => fill.mutate(false)}>
+        Тестовые фоны для пустых
+      </Button>
+      <Button size="sm" variant="ghost" disabled={disabled || fill.isPending} onClick={() => fill.mutate(true)}>
+        Заменить все тестовыми
+      </Button>
+      <span className="text-xs text-muted-foreground">
+        Фоны-заглушки из библиотеки — чтобы дойти до видео без генерации картинок.
+      </span>
+      <ErrorBox error={fill.error} />
+    </div>
+  )
+}
+
 export default function ImagesStep({ project, state }: StepViewProps) {
   const id = project.id
   const images = useQuery({
@@ -129,10 +155,13 @@ export default function ImagesStep({ project, state }: StepViewProps) {
   const slots = images.data ?? []
   if (!slots.length) return <Empty>{state.status === 'running' ? 'Генерируем картинки…' : 'Картинок пока нет.'}</Empty>
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      {slots.map((s) => (
-        <SlotCard key={`${s.slot}:${s.url}:${s.attempts}`} projectId={id} slot={s} />
-      ))}
+    <div className="grid gap-3">
+      <SamplesBar projectId={id} disabled={state.status === 'running'} />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {slots.map((s) => (
+          <SlotCard key={`${s.slot}:${s.url}:${s.attempts}`} projectId={id} slot={s} />
+        ))}
+      </div>
     </div>
   )
 }
