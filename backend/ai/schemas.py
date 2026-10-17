@@ -146,3 +146,78 @@ def validate_doc(name: str, doc: Mapping[str, Any]) -> None:
 
 class QueriesOut(BaseModel):
     queries: list[str]
+
+
+# ---------------------------------------------------------------- step 6 (storyboard)
+class PlanBackground(BaseModel):
+    id: str
+    prompt: str
+
+
+class PlanScene(BaseModel):
+    id: int
+    background: str
+    pose: str
+
+
+class StoryboardPlanOut(BaseModel):
+    backgrounds: list[PlanBackground]
+    scenes: list[PlanScene]
+
+
+class PoseChangeOut(BaseModel):
+    at_word: int
+    pose: str
+
+
+class OverlayOut(BaseModel):
+    type: Literal["label", "counter", "arrow", "coins", "stamp", "note"]
+    at_word: int
+    text: str | None = None
+    value: float | None = None
+    suffix: str | None = None
+    color: Literal["ink", "red", "blue", "green", "yellow"] | None = None
+
+
+class SfxOut(BaseModel):
+    file: str
+    at_word: int
+
+
+class SceneDetailOut(BaseModel):
+    id: int
+    pose_changes: list[PoseChangeOut]
+    overlays: list[OverlayOut]
+    punch_at_word: int | None = None
+    keywords: list[int]
+    sfx: list[SfxOut]
+
+
+class StoryboardDetailsOut(BaseModel):
+    scenes: list[SceneDetailOut]
+
+
+# ---------------------------------------------------------------- step 7 (image QA)
+class ImageQAOut(BaseModel):
+    has_text: bool
+    has_people: bool
+    style_match: bool
+    is_photoreal: bool
+    notes: str
+
+
+# ---------------------------------------------------------------- step 10 (metadata)
+class ChapterTitleOut(BaseModel):
+    beat: str
+    title: str
+
+
+class MetadataOut(BaseModel):
+    titles: list[str]
+    description_intro: str
+    chapters_heading: str
+    sources_heading: str
+    chapter_titles: list[ChapterTitleOut]
+    hashtags: list[str]
+    tags: list[str]
+    thumbnail_texts: list[str]

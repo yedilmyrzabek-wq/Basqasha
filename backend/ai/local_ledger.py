@@ -1,7 +1,8 @@
 """In-memory ICostLedger for standalone runs (smoke scripts). The app uses the DB ledger.
 
 Prices mirror the `pricing` seed in supabase/migrations/0001_init.sql (USD; *_tokens per 1M).
-Unit keys used by backend/ai: input_tokens, output_tokens (thinking included), search_query, images.
+Unit keys used by backend/ai: input_tokens, output_tokens (thinking included), search_query,
+images + image_size.
 """
 from __future__ import annotations
 
@@ -31,6 +32,12 @@ PRICES: dict[tuple[str, str], list[tuple[date, dict[str, Decimal]]]] = {
         (date(2026, 10, 16), {"input_tokens": Decimal("0.20")})],
     ("google", "google_search_grounding"): [
         (date(2026, 10, 16), {"search_query": Decimal("0.014")})],
+    ("google", "gemini-nano-banana-2.1"): [
+        (date(2026, 10, 16), {"input_tokens": Decimal("1.50"), "image_1K": Decimal("0.0336"),
+                              "image_2K": Decimal("0.0504"), "image_4K": Decimal("0.113")})],
+    ("google", "gemini-3.1-flash-image"): [
+        (date(2026, 10, 16), {"input_tokens": Decimal("0.50"), "image_1K": Decimal("0.067"),
+                              "image_2K": Decimal("0.101")})],
     ("anthropic", "claude-code-cli"): [(date(2026, 10, 16), {})],
 }
 _PER_MILLION = {"input_tokens", "output_tokens"}
@@ -47,6 +54,8 @@ class LocalCostLedger:
             return Decimal(0)
         prices = max(rows, key=lambda r: r[0])[1]
         usd = Decimal(0)
+        if units.get("images"):  # {"images": n, "image_size": "2K"} -> unit image_2K
+            usd += prices.get(f"image_{units.get('image_size', '1K')}", Decimal(0)) * Decimal(str(units["images"]))
         for unit, qty in units.items():
             p = prices.get(unit)
             if p is not None:
