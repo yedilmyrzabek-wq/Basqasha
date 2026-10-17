@@ -34,7 +34,8 @@ class AI:
     def idea(self, transcript: str, *, language: str, ctx: CallContext, source_title: str = "",
              source_minutes: float = 0, source_views: int | None = None,
              operator_hint: str | None = None) -> dict[str, Any]:
-        return generate_idea(self.llm, transcript, language=language, ctx=ctx, model=self.settings.model_text,
+        # idea uses the script model (Opus via Claude CLI): picking the angle is as important as the text
+        return generate_idea(self.llm, transcript, language=language, ctx=ctx, model=self.settings.model_script,
                              source_title=source_title, source_minutes=source_minutes,
                              source_views=source_views, operator_hint=operator_hint)
 
@@ -102,7 +103,8 @@ def build_ai(ledger: ICostLedger, settings: Settings | None = None, *, wpm: floa
         # All text steps via the Claude subscription; Gemini only for embeddings and images.
         llm = ClaudeCodeLLM(ledger, gemini, cli=s.claude_cli, model=s.claude_model,
                             model_map={s.model_script: s.claude_model_script,
-                                       s.model_script_fallback: s.claude_model_script})
+                                       s.model_script_fallback: s.claude_model_script},
+                            effort_map={s.claude_model_script: s.claude_effort_script})
     gemini_writer = GeminiScriptWriter(llm, model=s.model_script, check_model=s.model_cheap,
                                        check_fallback=s.model_text, wpm=wpm or s.default_wpm_voice)
     kind = script_writer or s.script_writer

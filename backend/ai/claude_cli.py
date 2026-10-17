@@ -31,12 +31,14 @@ _URL = re.compile(r"https?://[^\s\"'<>)\]]+")
 
 class ClaudeCodeLLM:
     def __init__(self, ledger: ICostLedger, gemini: GeminiLLM, *, cli: str = "claude",
-                 model: str = "sonnet", model_map: dict[str, str] | None = None, timeout_s: int = 900):
+                 model: str = "sonnet", model_map: dict[str, str] | None = None,
+                 effort_map: dict[str, str] | None = None, timeout_s: int = 900):
         self.ledger = ledger
         self.gemini = gemini
         self.cli = _resolve_cli(cli)
         self.model = model
-        self.model_map = model_map or {}   # gemini model id -> claude model alias (e.g. script -> opus)
+        self.model_map = model_map or {}   # gemini model id -> claude model (e.g. script -> opus)
+        self.effort_map = effort_map or {}  # claude model -> --effort level
         self.timeout_s = timeout_s
         self.workdir = Path(tempfile.mkdtemp(prefix="claude_llm_"))
 
@@ -53,6 +55,8 @@ class ClaudeCodeLLM:
         cmd = [self.cli, "-p", "--output-format", "json", "--model", claude_model,
                "--strict-mcp-config", "--setting-sources", "", "--json-schema", schema,
                "--system-prompt", system or SYSTEM, "--tools", ",".join(tools) if tools else ""]
+        if claude_model in self.effort_map:
+            cmd += ["--effort", self.effort_map[claude_model]]
         if tools:
             cmd += ["--allowedTools", *tools]
         if grounding:
