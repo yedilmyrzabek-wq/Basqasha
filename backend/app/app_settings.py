@@ -27,6 +27,7 @@ def defaults() -> dict[str, Any]:
         "script_writer": s.script_writer,
         "image_source": "gemini",   # gemini | samples (placeholder backgrounds, no image billing)
         "style_suffix": STYLE_SUFFIX,
+        "backgrounds_count": 30,    # unique backgrounds per video (each ≈ $0.05)
         "target_seconds": s.default_target_seconds,
         "wpm_voice": s.default_wpm_voice,
         "similarity_threshold": 0.8,

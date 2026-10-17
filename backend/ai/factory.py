@@ -55,10 +55,11 @@ class AI:
 
     def storyboard(self, script_doc: Mapping[str, Any], words_doc: Mapping[str, Any], poses: list[dict],
                    sfx_names: list[str], *, language: str, ctx: CallContext,
-                   operator_comments: str | None = None) -> dict[str, Any]:
+                   operator_comments: str | None = None, n_backgrounds: int = 30) -> dict[str, Any]:
         """Step 6: storyboard.schema.json document (2-3 LLM calls; timing/layout/fixes in code)."""
         return build_storyboard(self.llm, self.settings.model_text, script_doc, words_doc, poses, sfx_names,
-                                language=language, ctx=ctx, operator_comments=operator_comments)
+                                language=language, ctx=ctx, operator_comments=operator_comments,
+                                n_backgrounds=n_backgrounds)
 
     def background_image(self, prompt: str, out_path: Path, *, ctx: CallContext,
                          style_refs: Sequence[Path] = (), style_suffix: str | None = None) -> dict[str, Any]:

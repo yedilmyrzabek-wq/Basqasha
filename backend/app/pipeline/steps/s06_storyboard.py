@@ -7,6 +7,7 @@ from typing import Any
 
 from sqlalchemy import func, select
 
+from app import app_settings
 from app.db import session_scope
 from app.media import library, storyboard_rules
 from app.models import SceneComment, Storyboard
@@ -49,12 +50,14 @@ def generate(project_id: uuid.UUID, operator_comments: str | None = None) -> Sto
     with session_scope() as db:
         track = aligned_track(db, project_id)
         words_doc, track_id = track.words_json, track.id
+        n_backgrounds = int(app_settings.load(db).get("backgrounds_count", 30))
     poses = library.poses()
     if not poses:
         raise RuntimeError("library/poses/poses.json has no poses")
     ai = ai_bridge.build(project_id)
     doc = ai.storyboard(ctx.approved_script, words_doc, poses, sorted(library.sfx()), language=ctx.language,
-                        ctx=CallContext(project_id, "storyboard"), operator_comments=operator_comments)
+                        ctx=CallContext(project_id, "storyboard"), operator_comments=operator_comments,
+                        n_backgrounds=n_backgrounds)
     return save_version(project_id, dict(doc), words_doc, track_id,
                         "revised by operator comments" if operator_comments else "AI")
 

@@ -105,7 +105,7 @@ function SettingsForm({ initial }: { initial: Settings }) {
         <CardHeader>
           <CardTitle>Стиль картинок</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grid gap-4">
           <Field label="STYLE SUFFIX — добавляется к каждому промпту фона" htmlFor="style">
             <Textarea
               id="style"
@@ -115,6 +115,26 @@ function SettingsForm({ initial }: { initial: Settings }) {
               onChange={(e) => setS({ ...s, style_suffix: e.target.value })}
             />
           </Field>
+          {(() => {
+            const n = Number((s as Record<string, unknown>).backgrounds_count ?? 30)
+            return (
+              <Field
+                label="Количество разных фонов на видео"
+                htmlFor="bg-count"
+                hint={`≈ $${(n * 0.053).toFixed(2)} на видео (≈ $0.05 за фон). Не больше числа сцен.`}
+              >
+                <Input
+                  id="bg-count"
+                  type="number"
+                  min={4}
+                  max={60}
+                  step={1}
+                  value={n}
+                  onChange={(e) => setS({ ...s, backgrounds_count: Number(e.target.value) } as Settings)}
+                />
+              </Field>
+            )
+          })()}
         </CardContent>
       </Card>
 

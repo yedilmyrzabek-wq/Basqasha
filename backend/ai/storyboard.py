@@ -51,8 +51,14 @@ def scene_count(seconds: float) -> int:
     return max(30, min(60, round(seconds / SEC_PER_SCENE)))
 
 
-def bg_count(n_scenes: int) -> int:
-    return max(12, min(15, math.ceil(n_scenes / 3.4)))
+def bg_count(n_scenes: int, wanted: int = 30) -> int:
+    """Unique backgrounds (setting backgrounds_count), never more than scenes and at least 4."""
+    return max(4, min(int(wanted), n_scenes))
+
+
+def bg_min_uses(n_scenes: int, n_bg: int) -> int:
+    """Each background is reused 2+ times when there are few of them, otherwise once is fine."""
+    return 2 if n_bg * 2 <= n_scenes else 1
 
 
 class _Timeline:
@@ -201,21 +207,22 @@ def beat_of_words(script_doc: Mapping[str, Any], n_words: int) -> list[str]:
 
 
 # ------------------------------------------------------------------ background balance (code)
-def balance_backgrounds(assign: list[str], bg_ids: list[str]) -> tuple[list[str], list[str]]:
-    """Make every background used 2-4 times (video_craft R10), keeping 12-15 backgrounds."""
+def balance_backgrounds(assign: list[str], bg_ids: list[str], min_uses: int = 2,
+                        min_bg: int = 4) -> tuple[list[str], list[str]]:
+    """Make every background used min_uses..4 times (video_craft R10)."""
     assign, bg_ids = list(assign), list(bg_ids)
     for _ in range(1000):
         cnt = Counter(assign)
-        under = [b for b in bg_ids if cnt[b] < 2]
+        under = [b for b in bg_ids if cnt[b] < min_uses]
         over = [b for b in bg_ids if cnt[b] > 4]
         if not under and not over:
             break
         if under:
             b = min(under, key=lambda x: cnt[x])
             occ = [i for i, x in enumerate(assign) if x == b]
-            donors = [i for i, x in enumerate(assign) if x != b and cnt[x] > 2]
+            donors = [i for i, x in enumerate(assign) if x != b and cnt[x] > min_uses]
             if not donors:
-                if len(bg_ids) > 12:
+                if len(bg_ids) > min_bg:
                     for i in occ:  # drop b: give its scene to a neighbour
                         nb = assign[i - 1] if i > 0 else assign[i + 1]
                         assign[i] = nb
@@ -265,6 +272,7 @@ def _plan(llm: ILLM, model: str, ctx: CallContext, *, language: str, title: str,
     p = load_prompt("storyboard_plan")
     prompt = p.render(language_name=LANGUAGE_NAMES.get(language, language), title=title,
                       scene_count=str(len(ranges)), bg_count=str(n_bg),
+                      min_uses=str(bg_min_uses(len(ranges), n_bg)),
                       scenes_text=_scene_lines(tl, ranges, beats),
                       poses_json=json.dumps([{"name": x["name"], "tags": x.get("tags", [])} for x in poses],
                                             ensure_ascii=False),
@@ -275,7 +283,7 @@ def _plan(llm: ILLM, model: str, ctx: CallContext, *, language: str, title: str,
         out = llm.generate_json(prompt=prompt + problems, response_model=StoryboardPlanOut, model=model,
                                 ctx=ctx, max_output_tokens=8000).value
         errs = []
-        if not 12 <= len(out.backgrounds) <= 15:
+        if abs(len(out.backgrounds) - n_bg) > 2:
             errs.append(f"you returned {len(out.backgrounds)} backgrounds, need exactly {n_bg}")
         missing = set(range(1, len(ranges) + 1)) - {s.id for s in out.scenes}
         if missing:
@@ -504,20 +512,20 @@ def check_rules(doc: Mapping[str, Any], tl: _Timeline) -> list[str]:
 
 def build_storyboard(llm: ILLM, model: str, script_doc: Mapping[str, Any], words_doc: Mapping[str, Any],
                      poses: list[dict], sfx_names: list[str], *, language: str, ctx: CallContext,
-                     operator_comments: str | None = None) -> dict[str, Any]:
+                     operator_comments: str | None = None, n_backgrounds: int = 30) -> dict[str, Any]:
     tl = _Timeline(words_doc)
     pose_names = {p["name"] for p in poses}
     default_pose = next((p for p in ("point", "present") if p in pose_names), poses[0]["name"])
     n_scenes = scene_count(tl.duration)
     beats = beat_of_words(script_doc, tl.n)
     ranges = split_scenes(tl, n_scenes, beats)
-    n_bg = bg_count(len(ranges))
+    n_bg = bg_count(len(ranges), n_backgrounds)
     title = script_doc.get("title", "")
 
     plan = _plan(llm, model, ctx, language=language, title=title, tl=tl, ranges=ranges, beats=beats,
                  poses=poses, n_bg=n_bg, operator_comments=operator_comments)
-    id_map = {b.id: f"bg{k + 1:02d}" for k, b in enumerate(plan.backgrounds[:15])}
-    bg_prompt = {id_map[b.id]: b.prompt.strip() for b in plan.backgrounds[:15]}
+    id_map = {b.id: f"bg{k + 1:02d}" for k, b in enumerate(plan.backgrounds[:n_bg + 2])}
+    bg_prompt = {id_map[b.id]: b.prompt.strip() for b in plan.backgrounds[:n_bg + 2]}
     by_id = {s.id: s for s in plan.scenes}
     assign, poses_out = [], []
     for k in range(len(ranges)):
@@ -528,7 +536,7 @@ def build_storyboard(llm: ILLM, model: str, script_doc: Mapping[str, Any], words
         poses_out.append(pose)
     if poses_out[0] not in HOOK_POSES:
         poses_out[0] = next((p for p in HOOK_POSES if p in pose_names), poses_out[0])
-    assign, _ = balance_backgrounds(assign, list(bg_prompt))
+    assign, _ = balance_backgrounds(assign, list(bg_prompt), bg_min_uses(len(ranges), n_bg))
 
     # renumber backgrounds bg01.. in order of first use
     order = list(dict.fromkeys(assign))

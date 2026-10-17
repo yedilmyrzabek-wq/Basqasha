@@ -140,8 +140,9 @@ def check(sb: dict[str, Any], words: list[dict], poses: set[str]) -> list[str]:
 
     for bg in sb["backgrounds"]:
         uses = bg_uses.get(bg["id"], [])
-        if not 2 <= len(uses) <= 4:
-            errs.append(f"{bg['id']}: used {len(uses)} times (2-4)")
+        lo = 2 if len(sb["backgrounds"]) * 2 <= len(scenes) else 1
+        if not lo <= len(uses) <= 4:
+            errs.append(f"{bg['id']}: used {len(uses)} times ({lo}-4)")
         for x, y in zip(uses, uses[1:]):
             cx, cy = x["camera"], y["camera"]
             df = max(abs(cx["focus"][0] - cy["focus"][0]), abs(cx["focus"][1] - cy["focus"][1]))
