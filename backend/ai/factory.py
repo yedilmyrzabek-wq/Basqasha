@@ -7,6 +7,7 @@ from typing import Any, Mapping
 from app.config import Settings, get_settings
 from app.providers.interfaces import CallContext, ICostLedger, OriginalityReference
 from ai.facts import FactsResult, research_facts
+from ai.claude_cli import ClaudeCodeLLM
 from ai.gemini import GeminiLLM
 from ai.idea import generate_idea
 from ai.originality import GeminiOriginalityChecker, run_originality
@@ -19,7 +20,7 @@ TEXT_FALLBACK = "gemini-3.6-flash"
 @dataclass
 class AI:
     settings: Settings
-    llm: GeminiLLM
+    llm: GeminiLLM | ClaudeCodeLLM
     writer: GeminiScriptWriter | ClaudeCodeScriptWriter
     checker: GeminiOriginalityChecker
 
@@ -56,10 +57,16 @@ def build_ai(ledger: ICostLedger, settings: Settings | None = None, *, wpm: floa
         TEXT_FALLBACK: s.model_cheap,
         s.model_cheap: s.model_text,
     })
+    if s.text_llm == "claude_code":
+        # All text steps via the Claude subscription; Gemini only for embeddings and images.
+        llm = ClaudeCodeLLM(ledger, llm, cli=s.claude_cli, model=s.claude_model,
+                            model_map={s.model_script: s.claude_model_script,
+                                       s.model_script_fallback: s.claude_model_script})
     gemini_writer = GeminiScriptWriter(llm, model=s.model_script, check_model=s.model_cheap,
                                        check_fallback=s.model_text, wpm=wpm or s.default_wpm_voice)
     kind = script_writer or s.script_writer
-    writer = ClaudeCodeScriptWriter(gemini_writer, ledger, s.claude_cli) if kind == "claude_code" else gemini_writer
+    use_cli_writer = kind == "claude_code" and s.text_llm != "claude_code"  # already Claude otherwise
+    writer = ClaudeCodeScriptWriter(gemini_writer, ledger, s.claude_cli) if use_cli_writer else gemini_writer
     checker = GeminiOriginalityChecker(llm, embed_model=s.model_embed, judge_model=s.model_text,
                                        judge_fallback=s.model_script_fallback, shortlist_k=shortlist_k)
     return AI(settings=s, llm=llm, writer=writer, checker=checker)

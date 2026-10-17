@@ -29,7 +29,7 @@ $procs = @()
 $procs += Start-Process uv -ArgumentList "run", "uvicorn", "app.main:app", "--host", $apiHost, "--port", $apiPort, "--reload", "--reload-dir", "app", "--reload-dir", "ai" `
     -WorkingDirectory $backend -NoNewWindow -PassThru
 # worker restarts on code changes too (a step interrupted by a restart is marked failed -> «Повторить»)
-$procs += Start-Process uv -ArgumentList "run", "watchfiles", "--filter", "python", "`"python -m app.worker`"", "app", "ai" `
+$procs += Start-Process uv -ArgumentList "run", "watchfiles", "--filter", "python", "app.worker.main", "app", "ai" `
     -WorkingDirectory $backend -NoNewWindow -PassThru
 $frontPort = [int](Get-EnvValue "FRONTEND_PORT" "5173")
 $frontBusy = [bool](Get-NetTCPConnection -LocalPort $frontPort -State Listen -ErrorAction SilentlyContinue)

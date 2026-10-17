@@ -44,6 +44,7 @@ class GeminiOriginalityChecker:
         # Cross-lingual cosine (kk script vs en source, same topic) is high for almost every sentence
         # (pilot: 35/39 >= 0.8), so it is NOT a gate: it only picks the top-k pairs for the judge.
         self.shortlist_k = shortlist_k
+        self.embed_down = False
 
     def _embed(self, texts: list[str], ctx: CallContext) -> np.ndarray:
         m = np.asarray(self.llm.embed(texts, model=self.embed_model, ctx=ctx), dtype=np.float32)
@@ -55,7 +56,14 @@ class GeminiOriginalityChecker:
         src = [s for s in reference.sentences if len(s.split()) >= 3]
         if reference.title:
             src.append(reference.title)
-        sim = self._embed(ours, ctx) @ self._embed(src, ctx).T
+        if self.embed_down:
+            return self._check_full(ours, src, ctx)
+        try:
+            sim = self._embed(ours, ctx) @ self._embed(src, ctx).T
+        except ModelUnavailable as e:  # e.g. Gemini free tier exhausted: judge the whole text instead
+            log.warning("embeddings unavailable (%s) -> full-text judge", str(e)[:160])
+            self.embed_down = True  # don't wait for the same 429 again in this run
+            return self._check_full(ours, src, ctx)
         best_j = sim.argmax(axis=1)
         best = sim[np.arange(len(ours)), best_j]
 
@@ -83,6 +91,25 @@ class GeminiOriginalityChecker:
             "judged": [{"index": i, "similarity": round(float(best[i]), 3), "copied": judged.get(i, (False, ""))[0],
                         "reason": judged.get(i, (False, ""))[1]} for i in order],
             "models": {"embed": self.embed_model, "judge": self.judge_model},
+        }
+
+
+    def _check_full(self, ours: list[str], src: list[str], ctx: CallContext) -> Mapping[str, Any]:
+        sentences = [{"index": i, "ours": t} for i, t in enumerate(ours)]
+        prompt = load_prompt("originality_judge_full").render(sentences_json=sentences,
+                                                               source_text=" ".join(src)[:60_000])
+        out = self.llm.generate_json(prompt=prompt, response_model=JudgeOut, model=self.judge_model, ctx=ctx)
+        judged = {it.index: (it.copied, it.reason) for it in out.value.items if 0 <= it.index < len(ours)}
+        flagged = [{"index": i, "text": ours[i], "similarity": None, "source_index": None}
+                   for i in range(len(ours)) if judged.get(i, (False, ""))[0]]
+        return {
+            "verdict": "fail" if flagged else "pass",
+            "gate": "llm_judge_full_text",
+            "flagged_sentences": flagged,
+            "max_similarity": 0.0,  # no embeddings in this mode
+            "sentences_checked": len(ours), "source_sentences": len(src), "shortlist_k": len(ours),
+            "judged": [{"index": i, "similarity": None, "copied": c, "reason": r} for i, (c, r) in sorted(judged.items())],
+            "models": {"embed": None, "judge": out.model},
         }
 
 
