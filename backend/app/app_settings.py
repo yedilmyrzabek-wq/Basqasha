@@ -36,7 +36,6 @@ def defaults() -> dict[str, Any]:
         "backgrounds_count": 30,    # unique backgrounds per video (each ≈ $0.05)
         "target_seconds": s.default_target_seconds,
         "wpm_voice": s.default_wpm_voice,
-        "similarity_threshold": 0.8,
         "budget_project_usd": s.budget_project_usd,
         "budget_project_warn_usd": s.budget_project_warn_usd,
         "budget_month_stop_usd": s.budget_month_stop_usd,

@@ -14,8 +14,8 @@ from ai.gemini import GeminiLLM
 from ai.idea import generate_idea
 from ai.images import GeminiImageProvider, generate_background
 from ai.metadata import build_metadata
-from ai.originality import GeminiOriginalityChecker, run_originality
-from ai.script import GeminiScriptWriter
+from ai.originality import OriginalityChecker, run_originality
+from ai.script import ScriptWriter
 from ai.storyboard import build_storyboard
 from ai.tts import TtsExport, export_tts
 
@@ -26,8 +26,8 @@ TEXT_FALLBACK = "gemini-3.6-flash"
 class AI:
     settings: Settings
     llm: GeminiLLM | ClaudeCodeLLM
-    writer: GeminiScriptWriter
-    checker: GeminiOriginalityChecker
+    writer: ScriptWriter
+    checker: OriginalityChecker
     images: GeminiImageProvider
     style_suffix: str = STYLE_SUFFIX       # operator setting settings.data.style_suffix (pass to build_ai)
 
@@ -112,9 +112,9 @@ def build_ai(ledger: ICostLedger, settings: Settings | None = None, *, wpm: floa
                                        s.model_text: s.claude_model,
                                        s.model_cheap: s.claude_model_cheap},
                             effort_map={s.claude_model_script: s.claude_effort_script})
-    writer = GeminiScriptWriter(llm, model=s.model_script, check_model=s.model_cheap,
+    writer = ScriptWriter(llm, model=s.model_script, check_model=s.model_cheap,
                                 check_fallback=s.model_text, wpm=wpm or s.default_wpm_voice)
-    checker = GeminiOriginalityChecker(llm, embed_model=s.model_embed, judge_model=s.model_text,
+    checker = OriginalityChecker(llm, embed_model=s.model_embed, judge_model=s.model_text,
                                        judge_fallback=s.model_script_fallback, shortlist_k=shortlist_k)
     if claude_mode:
         checker.embed_down = True  # Claude has no embeddings: the judge compares against the full source text

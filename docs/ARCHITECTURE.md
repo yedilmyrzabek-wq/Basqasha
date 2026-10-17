@@ -24,7 +24,7 @@ The DB stores POSIX paths relative to `DATA_DIR` (project files) or `LIBRARY_DIR
 ## 2. Steps and state machine
 Steps: `source → idea → facts → script → voice → storyboard → images → preview → render → metadata` (enum `step_key`). The table `project_step` holds one row per step.
 Statuses: `pending → running → done | waiting_operator | failed`; `waiting_operator → running/done` after an operator action; `failed → running` (retry); `done → stale` when an upstream input changes; `stale → running`.
-A step runs only when all earlier steps are `done`. When a step finishes `done`, the orchestrator queues the next step automatically. Only one step runs per project at a time (Huey, single worker).
+A step runs only when all earlier steps are `done`. When a step finishes `done`, the orchestrator queues the next step automatically. Only one step runs per project at a time (the next step is queued only after the previous one finishes); the Huey worker has 2 threads so a long render or LLM call does not block other projects or «Конкуренты» tasks.
 
 | Step | Waits for operator (`wait_reason`) | Completed by |
 |---|---|---|

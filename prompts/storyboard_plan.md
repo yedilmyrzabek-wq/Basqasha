@@ -30,4 +30,6 @@ Available poses:
 ## Operator comments on the previous version (apply them; empty = none)
 {{operator_comments}}
 
+{{playbook}}
+
 Return JSON: {"backgrounds": [{"id": "bg01", "prompt": "..."}], "scenes": [{"id": 1, "background": "bg01", "pose": "shock"}, ...]} with one entry for every scene id 1..{{scene_count}}.

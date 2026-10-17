@@ -47,6 +47,8 @@ You receive the auto-generated transcript of that foreign video.
 
 Output JSON only, matching the response schema. All {{language_name}} text in correct Cyrillic (for Kazakh: letters ә ғ қ ң ө ұ ү һ і), no Latin look-alike letters.
 
+{{playbook}}
+
 ## Source title (for reference only — do not reuse)
 {{source_title}}
 

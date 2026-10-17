@@ -86,7 +86,8 @@ def _gemini_models() -> dict[str, list[str]]:
         return out
     from google import genai
 
-    for m in genai.Client(api_key=s.gemini_api_key).models.list():
+    client = genai.Client(api_key=s.gemini_api_key)  # keep a reference: the pager needs an open client
+    for m in client.models.list():
         name = (m.name or "").removeprefix("models/")
         acts = m.supported_actions or []
         if "embedContent" in acts:

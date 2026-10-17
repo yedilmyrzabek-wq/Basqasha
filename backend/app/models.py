@@ -298,3 +298,40 @@ class CostEntry(Base):
     units: Mapped[dict] = mapped_column(JSONB, default=dict)
     usd: Mapped[Decimal] = mapped_column(Numeric(10, 6))
     created_at: Mapped[datetime] = created()
+
+
+# ------------------------------------------------------------------ growth (migration 0003)
+class CompetitorItem(Base):
+    """«Конкуренты»: a video / channel / screenshot the owner liked + the AI breakdown."""
+    __tablename__ = "competitor_item"
+    __mapper_args__ = {"eager_defaults": True}
+    id: Mapped[uuid.UUID] = uuid_pk()
+    kind: Mapped[str] = mapped_column(Text, default="video")
+    url: Mapped[str | None] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(Text, default="")
+    channel: Mapped[str | None] = mapped_column(Text)
+    views: Mapped[int | None] = mapped_column(BigInteger)
+    duration_s: Mapped[int | None] = mapped_column(Integer)
+    published: Mapped[date | None] = mapped_column(Date)
+    notes: Mapped[str] = mapped_column(Text, default="")
+    images: Mapped[list] = mapped_column(JSONB, default=list)
+    info: Mapped[dict] = mapped_column(JSONB, default=dict)
+    status: Mapped[str] = mapped_column(Text, default="pending")
+    error: Mapped[str | None] = mapped_column(Text)
+    analysis: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = created()
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=DB)
+
+
+class GrowthReport(Base):
+    """Playbook synthesis runs and questions to the growth agent."""
+    __tablename__ = "growth_report"
+    __mapper_args__ = {"eager_defaults": True}
+    id: Mapped[uuid.UUID] = uuid_pk()
+    kind: Mapped[str] = mapped_column(Text)
+    question: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text, default="pending")
+    error: Mapped[str | None] = mapped_column(Text)
+    data: Mapped[dict | None] = mapped_column(JSONB)
+    applied_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = created()

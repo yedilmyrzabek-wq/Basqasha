@@ -56,4 +56,6 @@ Disputed findings (id, claim, note) — NEVER state these as established fact an
 
 Operator notes: {{operator_notes}}
 
+
+{{playbook}}
 Output JSON only, matching the response schema: title (<= 55 chars, {{language_name}}), hook_type, beats[8] with {beat, text, fact_ids}.

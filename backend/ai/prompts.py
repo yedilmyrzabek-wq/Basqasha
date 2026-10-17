@@ -28,6 +28,9 @@ class Prompt:
     def render(self, **values: object) -> str:
         def sub(m: re.Match[str]) -> str:
             key = m.group(1)
+            if key == "playbook" and key not in values:  # growth playbook, read fresh every time
+                from ai.growth import playbook_for_prompts
+                return playbook_for_prompts()
             if key not in values:
                 raise KeyError(f"prompt {self.id}: missing value for {{{{{key}}}}}")
             v = values[key]

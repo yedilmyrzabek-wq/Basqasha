@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { CheckCircle2 } from 'lucide-react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { api, unwrap, type Schemas } from '@/api/client'
+import { api, unwrap, type Schemas, request } from '@/api/client'
 import { projectKey, stepVersionKey, useInvalidateProject, useSettings } from '@/api/hooks'
 import { Empty, ErrorBox, Loading, Notice } from '@/components/common'
 import { Badge } from '@/components/ui/badge'
@@ -117,8 +117,7 @@ function ScriptEditor({ project, script, waiting }: { project: StepViewProps['pr
   const force = useMutation({
     mutationFn: async () => {
       if (dirty) await save.mutateAsync()
-      const r = await fetch(`/api/projects/${id}/script/approve?force=true`, { method: 'POST' })
-      if (!r.ok) throw new Error((await r.text()) || `HTTP ${r.status}`)
+      return request(`/api/projects/${id}/script/approve?force=true`, { method: 'POST' })
     },
     onSettled: invalidate,
   })

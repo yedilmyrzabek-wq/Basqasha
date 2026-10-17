@@ -1,6 +1,7 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
 import { useHealth } from '@/api/hooks'
 import { cn } from '@/lib/utils'
+import CompetitorsPage from '@/pages/CompetitorsPage'
 import PosesPage from '@/pages/PosesPage'
 import ProjectPage from '@/pages/ProjectPage'
 import ProjectsPage from '@/pages/ProjectsPage'
@@ -27,6 +28,7 @@ function HealthBanner() {
 
 const nav = [
   { to: '/', label: 'Проекты', end: true },
+  { to: '/competitors', label: 'Анализ конкурентов' },
   { to: '/poses', label: 'Библиотека поз' },
   { to: '/settings', label: 'Настройки' },
 ]
@@ -64,6 +66,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<ProjectsPage />} />
           <Route path="/projects/:projectId" element={<ProjectPage />} />
+          <Route path="/competitors" element={<CompetitorsPage />} />
           <Route path="/poses" element={<PosesPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<p className="text-muted-foreground">Страница не найдена.</p>} />

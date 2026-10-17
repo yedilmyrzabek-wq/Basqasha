@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ImageOff } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { api, formData, unwrap, type Schemas } from '@/api/client'
+import { api, formData, request, unwrap, type Schemas } from '@/api/client'
 import { projectKey, stepVersionKey, useInvalidateProject } from '@/api/hooks'
 import { CopyButton, Empty, ErrorBox, Loading } from '@/components/common'
 import { Badge, type BadgeTone } from '@/components/ui/badge'
@@ -119,11 +119,10 @@ function SlotCard({ projectId, slot }: { projectId: string; slot: Slot }) {
   )
 }
 
-const uploadOne = async (projectId: string, slot: string, file: File) => {
+const uploadOne = (projectId: string, slot: string, file: File) => {
   const fd = new FormData()
   fd.append('file', file)
-  const r = await fetch(`/api/projects/${projectId}/images/${slot}/upload`, { method: 'POST', body: fd })
-  if (!r.ok) throw new Error(`${slot}: ${(await r.text()) || r.status}`)
+  return request(`/api/projects/${projectId}/images/${slot}/upload`, { method: 'POST', body: fd })
 }
 
 /**
@@ -196,10 +195,8 @@ function ManualBar({ projectId, slots, disabled }: { projectId: string; slots: S
 function SamplesBar({ projectId, disabled }: { projectId: string; disabled: boolean }) {
   const invalidate = useInvalidateProject(projectId)
   const fill = useMutation({
-    mutationFn: async (allSlots: boolean) => {
-      const r = await fetch(`/api/projects/${projectId}/images/use-samples?all_slots=${allSlots}`, { method: 'POST' })
-      if (!r.ok) throw new Error((await r.text()) || `HTTP ${r.status}`)
-    },
+    mutationFn: (allSlots: boolean) =>
+      request(`/api/projects/${projectId}/images/use-samples?all_slots=${allSlots}`, { method: 'POST' }),
     onSettled: invalidate,
   })
   return (

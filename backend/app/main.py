@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import OperationalError
 
 from app import app_settings
-from app.api.routers import content, media, ops, production, projects, source
+from app.api.routers import content, growth, media, ops, production, projects, source
 from app.config import get_settings
 from app.db import session_scope
 from app.pipeline import steps  # noqa: F401 - registers step handlers
@@ -27,7 +27,8 @@ app.add_middleware(
     allow_origins=[f"http://localhost:{cfg.frontend_port}", f"http://127.0.0.1:{cfg.frontend_port}"],
     allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
-for r in (projects.router, source.router, content.router, media.router, production.router, ops.router):
+for r in (projects.router, source.router, content.router, media.router, production.router, ops.router,
+          growth.router):
     app.include_router(r)
 
 cfg.data_path.mkdir(parents=True, exist_ok=True)

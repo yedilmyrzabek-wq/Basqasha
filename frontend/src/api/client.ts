@@ -92,3 +92,34 @@ export function formData(body: Record<string, unknown>): FormData {
   }
   return fd
 }
+
+/**
+ * Untyped request for endpoints not in docs/api/openapi.yaml (growth, models, force approve…).
+ * Same error handling as `unwrap`. A plain object body is sent as JSON, FormData as multipart.
+ */
+export async function request<T = unknown>(
+  url: string,
+  { method = 'GET', body }: { method?: string; body?: FormData | Record<string, unknown> } = {},
+): Promise<T> {
+  const init: RequestInit = { method }
+  if (body instanceof FormData) init.body = body
+  else if (body !== undefined) {
+    init.body = JSON.stringify(body)
+    init.headers = { 'Content-Type': 'application/json' }
+  }
+  let res: Response
+  try {
+    res = await fetch(url, init)
+  } catch {
+    throw new ApiError('Бэкенд недоступен — нет соединения', 0)
+  }
+  const text = await res.text()
+  let data: unknown = text
+  try {
+    data = text ? JSON.parse(text) : undefined
+  } catch {
+    /* plain text */
+  }
+  if (!res.ok) throw describeError(data, res)
+  return data as T
+}

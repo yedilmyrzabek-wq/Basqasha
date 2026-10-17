@@ -37,6 +37,8 @@ Explain to the operator why this packaging works: the hook type of the title (si
 Character block (insert verbatim into every thumbnail prompt):
 {{character_block}}
 
+{{playbook}}
+
 ## Narration title: {{script_title}}
 
 ## Narration

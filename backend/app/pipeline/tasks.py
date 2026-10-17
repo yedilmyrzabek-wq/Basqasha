@@ -1,4 +1,4 @@
-"""Huey queue (SQLite file under data/queue). One worker thread => one step at a time."""
+"""Huey queue (SQLite file under data/queue), consumed by 2 worker threads (app/worker.py)."""
 from __future__ import annotations
 
 import uuid
@@ -36,3 +36,17 @@ def keep_alive() -> None:
     from app.db import engine
     with engine.connect() as c:
         c.execute(text("select 1"))
+
+
+@huey.task()
+def growth_item_task(item_id: str) -> None:
+    """«Конкуренты»: fetch + AI breakdown of one video / channel / screenshot."""
+    from app import growth
+    growth.analyze(uuid.UUID(item_id))
+
+
+@huey.task()
+def growth_report_task(report_id: str) -> None:
+    """«Конкуренты»: playbook synthesis or a question to the growth agent."""
+    from app import growth
+    growth.run_report(uuid.UUID(report_id))

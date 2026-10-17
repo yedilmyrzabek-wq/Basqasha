@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { CheckCircle2, CircleDashed, XCircle } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
-import { api, unwrap, type Settings as ApiSettings } from '@/api/client'
+import { api, request, unwrap, type Settings as ApiSettings } from '@/api/client'
 import { useHealth, useSettings } from '@/api/hooks'
 import { ErrorBox, Loading } from '@/components/common'
 import { MinutesInput } from '@/components/MinutesInput'
@@ -185,11 +185,7 @@ function SettingsForm({ initial }: { initial: Settings }) {
   const [tab, setTab] = useState<Mode>(initial.script_writer)
   const models = useQuery({
     queryKey: ['models'],
-    queryFn: async () => {
-      const r = await fetch('/api/models')
-      if (!r.ok) throw new Error(`HTTP ${r.status}`)
-      return (await r.json()) as Models
-    },
+    queryFn: () => request<Models>('/api/models'),
     staleTime: 3600_000,
   })
   const num = (k: keyof Settings) => (e: React.ChangeEvent<HTMLInputElement>) => setS({ ...s, [k]: Number(e.target.value) })
@@ -287,25 +283,14 @@ function SettingsForm({ initial }: { initial: Settings }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Длительность и проверки</CardTitle>
+          <CardTitle>Длительность</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
+        <CardContent className="grid gap-4 md:grid-cols-2">
           <Field label="Длительность по умолчанию" htmlFor="dur" hint={`≈ ${targetWords} слов. Любая: от 1 до 60 минут`}>
             <MinutesInput id="dur" seconds={s.target_seconds} onCommit={(sec) => setS({ ...s, target_seconds: sec })} />
           </Field>
           <Field label="Темп голоса, слов/мин" htmlFor="wpm" hint="Уточняется по последним 5 загруженным mp3">
             <Input id="wpm" type="number" min={60} max={200} step={1} value={s.wpm_voice} onChange={num('wpm_voice')} />
-          </Field>
-          <Field label="Порог похожести (0–1)" htmlFor="sim" hint="Только для режима Gemini (эмбеддинги)">
-            <Input
-              id="sim"
-              type="number"
-              min={0}
-              max={1}
-              step={0.01}
-              value={s.similarity_threshold}
-              onChange={num('similarity_threshold')}
-            />
           </Field>
         </CardContent>
       </Card>

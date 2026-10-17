@@ -14,7 +14,7 @@ from app.pipeline.orchestrator import DONE, StepResult, job_log, register
 from app.providers.interfaces import CallContext
 from app.schemas import errors as schema_errors
 from app.config import get_settings
-from app.sources import SourceRepository
+from app.sources import SourceRepository, youtube
 from app.storage import project_dir, rel, write_text
 
 PAID_PLANS = ("starter", "creator", "pro")
@@ -32,24 +32,8 @@ def character_block() -> str:
 
 
 def source_thumbnail(project_id: uuid.UUID, video_id: str | None):
-    """Download the competitor's thumbnail once (data/projects/{id}/source/thumb.jpg)."""
-    import urllib.request
-
-    if not video_id:
-        return None
-    out = project_dir(project_id, "source") / "thumb.jpg"
-    if out.is_file() and out.stat().st_size > 1000:
-        return out
-    for name in ("maxresdefault.jpg", "hqdefault.jpg"):
-        try:
-            with urllib.request.urlopen(f"https://i.ytimg.com/vi/{video_id}/{name}", timeout=20) as r:
-                data = r.read()
-            if len(data) > 1000:
-                out.write_bytes(data)
-                return out
-        except Exception:  # noqa: BLE001 - no thumbnail is fine
-            continue
-    return None
+    """The competitor's thumbnail, downloaded once to data/projects/{id}/source/thumb.jpg."""
+    return youtube.thumbnail(video_id, project_dir(project_id, "source") / "thumb.jpg")
 
 
 def checklist(db, project_id: uuid.UUID) -> dict[str, Any]:

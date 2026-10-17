@@ -110,7 +110,7 @@ def check(sb: dict[str, Any], words: list[dict], poses: set[str]) -> list[str]:
 
     bg_uses: dict[str, list[dict]] = defaultdict(list)
     for i, s in enumerate(scenes):
-        a, b = s["start_word"], s["end_word"]
+        a = s["start_word"]
         start = t(a)
         end = t(scenes[i + 1]["start_word"]) if i + 1 < len(scenes) else words[-1]["end"]
         dur = end - start

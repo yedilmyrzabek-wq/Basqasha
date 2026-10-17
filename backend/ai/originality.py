@@ -6,7 +6,7 @@ The verdict is based on judge-flagged sentences only (0 -> pass). Flagged senten
 rewritten by the script writer (max 2 rounds); the writer gets a generic reason, never source text.
 
 Calls:
-  checker = GeminiOriginalityChecker(llm, embed_model=..., judge_model=..., judge_fallback=...)
+  checker = OriginalityChecker(llm, embed_model=..., judge_model=..., judge_fallback=...)
   script, report = run_originality(writer, checker, script, reference, ctx)   # report -> originality.json
 """
 from __future__ import annotations
@@ -34,7 +34,7 @@ def reference_from_transcript(transcript: str, title: str | None = None) -> Orig
     return OriginalityReference(sentences=sentences, title=title or None)
 
 
-class GeminiOriginalityChecker:
+class OriginalityChecker:
     def __init__(self, llm: ILLM, *, embed_model: str, judge_model: str, judge_fallback: str,
                  shortlist_k: int = 15):
         self.llm = llm
@@ -113,7 +113,7 @@ class GeminiOriginalityChecker:
         }
 
 
-def run_originality(writer: IScriptWriter, checker: GeminiOriginalityChecker, script: Mapping[str, Any],
+def run_originality(writer: IScriptWriter, checker: OriginalityChecker, script: Mapping[str, Any],
                     reference: OriginalityReference, ctx: CallContext,
                     max_rounds: int = MAX_REWRITE_ROUNDS) -> tuple[Mapping[str, Any], dict[str, Any]]:
     """Check, auto-rewrite flagged sentences (<= max_rounds), re-check.

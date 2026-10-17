@@ -1,8 +1,7 @@
 """The only place the pipeline touches backend/ai (ai-engineer): ai.factory.build_ai wired with
-the DB cost ledger and the operator settings (models, writer, wpm, similarity threshold)."""
+the DB cost ledger and the operator settings (mode, models, wpm, style)."""
 from __future__ import annotations
 
-import inspect
 import uuid
 from typing import Any, Mapping
 
@@ -11,7 +10,7 @@ from app.config import get_settings
 from app.costs import ledger
 from app.db import session_scope
 from app.models import Project
-from app.providers.interfaces import CallContext, OriginalityReference
+from app.providers.interfaces import CallContext
 
 
 def build(project_id: uuid.UUID | None = None):
@@ -26,13 +25,8 @@ def build(project_id: uuid.UUID | None = None):
         "model_image": m["image"], "model_embed": m["embed"],
         "claude_model_script": c["script"], "claude_model": c["text"], "claude_model_cheap": c["cheap"],
         "claude_effort_script": c["effort"]})
-    kw: dict[str, Any] = {}
-    params = inspect.signature(build_ai).parameters
-    if "similarity_threshold" in params:
-        kw["similarity_threshold"] = float(cfg["similarity_threshold"])
-    if "style_suffix" in params and cfg.get("style_suffix"):
-        kw["style_suffix"] = cfg["style_suffix"]
-    return build_ai(ledger, settings, wpm=wpm, script_writer=cfg["script_writer"], **kw)
+    return build_ai(ledger, settings, wpm=wpm, script_writer=cfg["script_writer"],
+                    style_suffix=cfg.get("style_suffix") or None)
 
 
 def generate_idea(project_id: uuid.UUID, transcript: str, *, language: str, source_title: str | None,
