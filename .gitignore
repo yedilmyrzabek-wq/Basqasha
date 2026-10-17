@@ -30,3 +30,5 @@ docs/*.zip
 Thumbs.db
 .claude/settings.local.json
 .claude/worktrees/
+incoming/**
+!incoming/README.md

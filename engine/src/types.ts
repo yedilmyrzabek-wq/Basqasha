@@ -3,7 +3,7 @@ export type Color = 'ink' | 'red' | 'blue' | 'green' | 'yellow';
 
 export type AudioTrack = {src: string; volume: number; start_from?: number};
 
-export type Pose = {at: number; pose: string; src: string; width: number; height: number};
+export type Pose = {at: number; pose: string; src: string; width: number; height: number; scale?: number};
 
 export type Character = {x: number; y: number; height: number; flip: boolean; schedule: Pose[]};
 

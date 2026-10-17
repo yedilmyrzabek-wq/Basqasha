@@ -11,10 +11,11 @@ from app.config import get_settings
 from app.models import AppSettings
 
 STYLE_SUFFIX = (
-    "Flat vector illustration, minimal, warm cream paper background (#F6F1E7), thick dark ink outlines, "
-    "limited palette: muted red #E4572E, teal blue #2E86AB, green #3BA55C, mustard #F2C14E. "
-    "No people, no characters, no text, no letters, no logos. Large empty area in the lower-left third. "
-    "Soft paper grain. 16:9."
+    "Hand-drawn flat cartoon illustration in the style of popular stickman explainer videos: clean thick dark ink "
+    "outlines, flat soft colors with light simple shading, warm light cream paper background (#F6EFE0). "
+    "Palette: navy blue #34466B, teal #3FA59A, beige #CDB38E, white, small accents of mustard #E9B949 and coral #E06B4F. "
+    "Simple readable shapes, uncluttered. No people, no characters, no text, no letters, no numbers, no logos. "
+    "Large empty area in the lower-left third. 16:9."
 )
 
 

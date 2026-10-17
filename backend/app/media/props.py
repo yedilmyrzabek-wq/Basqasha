@@ -104,7 +104,8 @@ def build(sb: dict[str, Any], words_doc: dict[str, Any], images: dict[str, Path]
             scene["character"] = {
                 "x": ch["x"], "y": ch["y"], "height": ch.get("height", 470), "flip": bool(ch.get("flip", False)),
                 "schedule": [{**e, "src": asset(lib / "poses" / poses[e["pose"]]["file"]),
-                              "width": int(poses[e["pose"]]["width"]), "height": int(poses[e["pose"]]["height"])}
+                              "width": int(poses[e["pose"]]["width"]), "height": int(poses[e["pose"]]["height"]),
+                              "scale": float(poses[e["pose"]].get("scale", 1.0))}
                              for e in sched]}
         else:
             scene["character"] = None

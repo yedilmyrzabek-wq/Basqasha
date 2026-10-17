@@ -104,6 +104,7 @@
                       "pose": {"type": "string"},
                       "src": {"type": "string"},
                       "width": {"type": "integer", "description": "Native PNG size, from poses.json."},
+                      "scale": {"type": "number", "minimum": 0.2, "maximum": 2, "description": "Figure height relative to a standing pose (poses.json); default 1."},
                       "height": {"type": "integer"}
                     }
                   }

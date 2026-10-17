@@ -1,84 +1,504 @@
 {
+ "character": "kalpak_stickman",
  "poses": [
   {
-   "name": "coin",
-   "file": "pose_coin.png",
+   "name": "neutral",
+   "file": "neutral.png",
    "tags": [
-    "money",
-    "price"
+    "neutral",
+    "default",
+    "explain"
    ],
-   "width": 191,
-   "height": 318
+   "width": 209,
+   "height": 640,
+   "scale": 1.0,
+   "source": "reference_sheet.jpg"
   },
   {
-   "name": "excited",
-   "file": "pose_excited.png",
+   "name": "side_view",
+   "file": "side_view.png",
    "tags": [
-    "happy",
+    "side",
+    "walk_in"
+   ],
+   "width": 212,
+   "height": 634,
+   "scale": 0.991,
+   "source": "reference_sheet.jpg"
+  },
+  {
+   "name": "three_quarter",
+   "file": "three_quarter.png",
+   "tags": [
+    "neutral",
+    "listen"
+   ],
+   "width": 209,
+   "height": 633,
+   "scale": 0.989,
+   "source": "reference_sheet.jpg"
+  },
+  {
+   "name": "back_view",
+   "file": "back_view.png",
+   "tags": [
+    "back",
+    "look_away"
+   ],
+   "width": 209,
+   "height": 635,
+   "scale": 0.992,
+   "source": "reference_sheet.jpg"
+  },
+  {
+   "name": "wave_hello",
+   "file": "wave_hello.png",
+   "tags": [
+    "hello",
+    "intro",
+    "outro",
+    "happy"
+   ],
+   "width": 272,
+   "height": 634,
+   "scale": 0.991,
+   "source": "reference_sheet.jpg"
+  },
+  {
+   "name": "walk",
+   "file": "walk.png",
+   "tags": [
+    "walk",
+    "journey",
+    "neutral"
+   ],
+   "width": 308,
+   "height": 720,
+   "scale": 1.0,
+   "source": "pose_grid_b.jpg"
+  },
+  {
+   "name": "run_determined",
+   "file": "run_determined.png",
+   "tags": [
+    "run",
+    "hurry",
+    "determined",
+    "discipline"
+   ],
+   "width": 521,
+   "height": 676,
+   "scale": 0.939,
+   "source": "pose_grid_b.jpg"
+  },
+  {
+   "name": "jump_joy",
+   "file": "jump_joy.png",
+   "tags": [
+    "jump",
+    "joy",
+    "success",
     "payoff"
    ],
-   "width": 293,
-   "height": 318
+   "width": 406,
+   "height": 730,
+   "scale": 1.014,
+   "source": "pose_grid_b.jpg"
   },
   {
-   "name": "point",
-   "file": "pose_point.png",
+   "name": "sit_chair",
+   "file": "sit_chair.png",
    "tags": [
-    "explain",
-    "direct"
+    "sit",
+    "wait",
+    "calm"
    ],
-   "width": 269,
-   "height": 320
+   "width": 364,
+   "height": 670,
+   "scale": 0.931,
+   "source": "pose_grid_b.jpg"
   },
   {
-   "name": "popcorn",
-   "file": "pose_popcorn.png",
+   "name": "meditate",
+   "file": "meditate.png",
    "tags": [
-    "food",
-    "prop"
+    "calm",
+    "focus",
+    "mindfulness"
    ],
-   "width": 245,
-   "height": 318
+   "width": 341,
+   "height": 569,
+   "scale": 0.79,
+   "source": "pose_grid_b.jpg"
   },
   {
-   "name": "present",
-   "file": "pose_present.png",
+   "name": "sleep_lying",
+   "file": "sleep_lying.png",
    "tags": [
-    "show",
-    "intro"
+    "sleep",
+    "rest",
+    "tired"
    ],
-   "width": 259,
-   "height": 318
+   "width": 694,
+   "height": 293,
+   "scale": 0.407,
+   "source": "pose_grid_b.jpg"
   },
   {
-   "name": "shock",
-   "file": "pose_shock.png",
+   "name": "fall_surprised",
+   "file": "fall_surprised.png",
    "tags": [
+    "fall",
+    "fail",
     "surprise",
-    "hook"
+    "shock"
    ],
-   "width": 188,
-   "height": 320
+   "width": 609,
+   "height": 518,
+   "scale": 0.719,
+   "source": "pose_grid_b.jpg"
   },
   {
-   "name": "shrug",
-   "file": "pose_shrug.png",
+   "name": "cheer_arms_up",
+   "file": "cheer_arms_up.png",
    "tags": [
-    "doubt",
-    "unknown"
+    "cheer",
+    "win",
+    "excited",
+    "payoff"
    ],
-   "width": 300,
-   "height": 320
+   "width": 369,
+   "height": 631,
+   "scale": 0.876,
+   "source": "pose_grid_b.jpg"
   },
   {
-   "name": "think",
-   "file": "pose_think.png",
+   "name": "think_chin",
+   "file": "think_chin.png",
    "tags": [
+    "think",
     "question",
     "curious"
    ],
-   "width": 184,
-   "height": 320
+   "width": 169,
+   "height": 619,
+   "scale": 1.0,
+   "source": "expr_sheet_9.jpg"
+  },
+  {
+   "name": "worried_scratch_head",
+   "file": "worried_scratch_head.png",
+   "tags": [
+    "worried",
+    "unsure",
+    "problem"
+   ],
+   "width": 212,
+   "height": 610,
+   "scale": 0.985,
+   "source": "expr_sheet_9.jpg"
+  },
+  {
+   "name": "confused_shrug",
+   "file": "confused_shrug.png",
+   "tags": [
+    "confused",
+    "shrug",
+    "why"
+   ],
+   "width": 274,
+   "height": 615,
+   "scale": 0.994,
+   "source": "expr_sheet_9.jpg"
+  },
+  {
+   "name": "facepalm",
+   "file": "facepalm.png",
+   "tags": [
+    "facepalm",
+    "mistake",
+    "fail"
+   ],
+   "width": 168,
+   "height": 618,
+   "scale": 0.998,
+   "source": "expr_sheet_9.jpg"
+  },
+  {
+   "name": "idea_lightbulb",
+   "file": "idea_lightbulb.png",
+   "tags": [
+    "idea",
+    "insight",
+    "solution"
+   ],
+   "width": 237,
+   "height": 655,
+   "scale": 1.058,
+   "source": "expr_sheet_9.jpg"
+  },
+  {
+   "name": "read_book",
+   "file": "read_book.png",
+   "tags": [
+    "read",
+    "study",
+    "learn",
+    "research"
+   ],
+   "width": 140,
+   "height": 332,
+   "scale": 1.003,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "laptop_work",
+   "file": "laptop_work.png",
+   "tags": [
+    "work",
+    "computer",
+    "study"
+   ],
+   "width": 198,
+   "height": 315,
+   "scale": 0.952,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "phone_scroll",
+   "file": "phone_scroll.png",
+   "tags": [
+    "phone",
+    "distraction",
+    "social_media"
+   ],
+   "width": 123,
+   "height": 327,
+   "scale": 0.988,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "money_cash",
+   "file": "money_cash.png",
+   "tags": [
+    "money",
+    "price",
+    "rich"
+   ],
+   "width": 161,
+   "height": 331,
+   "scale": 1.0,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "shrug_smile",
+   "file": "shrug_smile.png",
+   "tags": [
+    "shrug",
+    "explain",
+    "so_what"
+   ],
+   "width": 157,
+   "height": 331,
+   "scale": 1.0,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "present_whiteboard",
+   "file": "present_whiteboard.png",
+   "tags": [
+    "teach",
+    "explain",
+    "plan",
+    "list"
+   ],
+   "width": 232,
+   "height": 310,
+   "scale": 0.937,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "magnify_search",
+   "file": "magnify_search.png",
+   "tags": [
+    "search",
+    "investigate",
+    "research"
+   ],
+   "width": 187,
+   "height": 303,
+   "scale": 0.915,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "drink_tea",
+   "file": "drink_tea.png",
+   "tags": [
+    "tea",
+    "break",
+    "calm"
+   ],
+   "width": 114,
+   "height": 321,
+   "scale": 0.97,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "drink_tea_relaxed",
+   "file": "drink_tea_relaxed.png",
+   "tags": [
+    "tea",
+    "relax",
+    "rest"
+   ],
+   "width": 124,
+   "height": 321,
+   "scale": 0.97,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "carry_box_heavy",
+   "file": "carry_box_heavy.png",
+   "tags": [
+    "heavy",
+    "burden",
+    "effort",
+    "struggle"
+   ],
+   "width": 216,
+   "height": 304,
+   "scale": 0.918,
+   "source": "pose_grid_a.jpg"
+  },
+  {
+   "name": "puzzled",
+   "file": "puzzled.png",
+   "tags": [
+    "puzzled",
+    "skeptical",
+    "neutral"
+   ],
+   "width": 420,
+   "height": 1280,
+   "scale": 1.0,
+   "source": "still_confused.jpg"
+  },
+  {
+   "name": "unsure",
+   "file": "unsure.png",
+   "tags": [
+    "unsure",
+    "doubt",
+    "sad"
+   ],
+   "width": 420,
+   "height": 1273,
+   "scale": 0.995,
+   "source": "still_confused.jpg"
+  },
+  {
+   "name": "scratch_head_skeptical",
+   "file": "scratch_head_skeptical.png",
+   "tags": [
+    "skeptical",
+    "think",
+    "doubt"
+   ],
+   "width": 487,
+   "height": 1266,
+   "scale": 0.989,
+   "source": "still_confused.jpg"
+  },
+  {
+   "name": "explain_open_hand",
+   "file": "explain_open_hand.png",
+   "tags": [
+    "explain",
+    "surprised",
+    "point"
+   ],
+   "width": 502,
+   "height": 1280,
+   "scale": 1.0,
+   "source": "still_confused.jpg"
+  },
+  {
+   "name": "confused_questions",
+   "file": "confused_questions.png",
+   "tags": [
+    "confused",
+    "question",
+    "why"
+   ],
+   "width": 649,
+   "height": 1267,
+   "scale": 0.99,
+   "source": "still_confused.jpg"
+  },
+  {
+   "name": "happy_dance",
+   "file": "happy_dance.png",
+   "tags": [
+    "happy",
+    "dance",
+    "fun"
+   ],
+   "width": 488,
+   "height": 1092,
+   "scale": 0.862,
+   "source": "still_celebrate.jpg"
+  },
+  {
+   "name": "jump_fist_pump",
+   "file": "jump_fist_pump.png",
+   "tags": [
+    "win",
+    "yes",
+    "excited"
+   ],
+   "width": 516,
+   "height": 1232,
+   "scale": 0.972,
+   "source": "still_celebrate.jpg"
+  },
+  {
+   "name": "jump_cheer",
+   "file": "jump_cheer.png",
+   "tags": [
+    "joy",
+    "excited",
+    "payoff"
+   ],
+   "width": 657,
+   "height": 1051,
+   "scale": 0.83,
+   "source": "still_celebrate.jpg"
+  },
+  {
+   "name": "happy_step",
+   "file": "happy_step.png",
+   "tags": [
+    "happy",
+    "walk",
+    "fun"
+   ],
+   "width": 528,
+   "height": 1100,
+   "scale": 0.868,
+   "source": "still_celebrate.jpg"
+  },
+  {
+   "name": "wave_smile",
+   "file": "wave_smile.png",
+   "tags": [
+    "hello",
+    "goodbye",
+    "outro"
+   ],
+   "width": 540,
+   "height": 1267,
+   "scale": 1.0,
+   "source": "still_celebrate.jpg"
   }
  ]
 }

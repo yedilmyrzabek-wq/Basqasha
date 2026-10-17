@@ -6,8 +6,8 @@ Node 22 + Remotion 4.0.535 + React 18 + TypeScript. One generic composition driv
 ```
 npm install
 npm run typecheck
-npm run render -- --props fixtures/demo.props.json --out out/demo.mp4
-npm run stills -- --props fixtures/demo.props.json --frames mid --out out/stills          # middle frame of every scene
+npm run render -- --props fixtures/glyphtest.props.json --out out/demo.mp4
+npm run stills -- --props fixtures/glyphtest.props.json --frames mid --out out/stills          # middle frame of every scene
 npm run stills -- --props fixtures/glyphtest.props.json --frames 45 --out out/glyph       # Kazakh glyph check
 npm run studio                                                                             # Remotion Studio (placeholder props)
 ```

@@ -1,0 +1,126 @@
+{
+ "expressions": [
+  {
+   "name": "happy_wave",
+   "file": "happy_wave.png",
+   "tags": [
+    "happy",
+    "hello"
+   ],
+   "width": 221,
+   "height": 321,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "laugh",
+   "file": "laugh.png",
+   "tags": [
+    "laugh",
+    "joy"
+   ],
+   "width": 214,
+   "height": 318,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "surprised",
+   "file": "surprised.png",
+   "tags": [
+    "surprise",
+    "wow"
+   ],
+   "width": 211,
+   "height": 317,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "shock_scared",
+   "file": "shock_scared.png",
+   "tags": [
+    "shock",
+    "fear"
+   ],
+   "width": 176,
+   "height": 324,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "angry_fist",
+   "file": "angry_fist.png",
+   "tags": [
+    "angry",
+    "frustrated"
+   ],
+   "width": 224,
+   "height": 323,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "angry",
+   "file": "angry.png",
+   "tags": [
+    "angry",
+    "serious"
+   ],
+   "width": 165,
+   "height": 287,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "panic",
+   "file": "panic.png",
+   "tags": [
+    "panic",
+    "stress",
+    "anxiety"
+   ],
+   "width": 206,
+   "height": 297,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "sad",
+   "file": "sad.png",
+   "tags": [
+    "sad",
+    "disappointed"
+   ],
+   "width": 168,
+   "height": 285,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "confused_question",
+   "file": "confused_question.png",
+   "tags": [
+    "confused",
+    "question"
+   ],
+   "width": 209,
+   "height": 292,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  },
+  {
+   "name": "bored",
+   "file": "bored.png",
+   "tags": [
+    "bored",
+    "lazy",
+    "procrastination"
+   ],
+   "width": 168,
+   "height": 292,
+   "scale": 1.0,
+   "source": "expr_sheet_b.jpg"
+  }
+ ]
+}

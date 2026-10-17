@@ -1,12 +1,8 @@
-# library/ — shared assets (PLACEHOLDERS)
+# library/ — ассеты канала
 
-Everything here is copied from `reference/costco_project_example` **only as a test placeholder**.
-The owner will supply the channel's own character (also the channel logo), its poses and sounds.
-The engine has no hard-coded pose names, file names or character look — it only reads what props.json gives it,
-and the backend builds props from the manifests below. Swapping assets = replace files + update the manifest.
+- `poses/` — **персонаж канала** (стикмен в калпаке): 38 поз, прозрачные PNG, имя файла = поза/эмоция (`think_chin.png`, `facepalm.png`, `jump_joy.png`…). `poses.json`: `name, file, tags, width, height, scale, source`. `scale` — высота фигуры относительно стоящей позы (лежачая ≈ 0.4), движок рисует все позы в одном масштабе тела.
+- `character/` — эталон персонажа (`reference_sheet.jpg`), промпты для генерации новых поз и видео (`PROMPTS.md`), `expressions/` — 10 эмоций крупным планом (для превью/миниатюр, в видео не используются).
+- `style/samples/` — 5 фонов в стиле канала (сгенерированы Gemini): референс стиля для генерации и тестовые фоны (режим «Тестовые фоны»).
+- `sfx/` — звуки и музыка + `sfx.json`. **Пока временные** (из старого примера) — заменить своими: положить в `incoming/sfx`, `incoming/music`.
 
-- `poses/` — transparent PNG per pose + `poses.json`: `{"poses":[{name, file, tags, width, height}]}`.
-  `width`/`height` = native PNG pixel size (the engine keeps the aspect ratio; feet = bottom edge, figure centred).
-  Pose PNGs should be trimmed to the figure with the feet touching the bottom edge.
-- `sfx/` — one-shot `.wav` + `sfx.json` manifest (`name`, `file`, `use`); `sfx/music/` — music beds (in `sfx.json` → `music`).
-- `style/samples/` — 5 sample backgrounds (style reference + engine fixture); `style/character/` — character reference sheets.
+Новые материалы кладите в `incoming/` — Claude разберёт. Новый лист поз нарезается `scripts/split_character_sheets.py`.

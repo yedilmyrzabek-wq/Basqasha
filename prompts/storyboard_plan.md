@@ -19,7 +19,7 @@ Video: "{{title}}"
 ## Assignment
 - Every background is used by 2-4 scenes (total = {{scene_count}} scenes). Reuse a background for scenes that talk about the same thing (e.g. return to the experiment room when the narration returns to the experiment). Consecutive scenes may share a background (the camera moves differently), but change the background at every beat boundary and at every re-hook question.
 - Scene 1 must use pose {{hook_poses}} (shock or think) — it is the hook.
-- Poses: choose from the list below by meaning (tags help). Vary poses; avoid the same pose more than 3 scenes in a row. Use "excited"/"popcorn"-type playful poses only for light moments, never for serious or sensitive statements.
+- Poses: choose from the list below by meaning (tags help). Vary poses; avoid the same pose more than 3 scenes in a row. Use playful poses (jump_joy, cheer_arms_up, happy_dance, jump_cheer) only for light moments, never for serious or sensitive statements.
 
 Available poses:
 {{poses_json}}

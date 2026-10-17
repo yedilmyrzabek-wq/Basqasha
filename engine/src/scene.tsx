@@ -32,7 +32,8 @@ const Char: React.FC<{c: Character}> = ({c}) => {
   const st = useStage();
   let cur = c.schedule[0];
   for (const s of c.schedule) if (f >= s.at) cur = s;
-  const h = c.height * st.k;
+  // scale: figure height relative to a standing pose (lying / sitting poses are shorter)
+  const h = c.height * st.k * (cur.scale ?? 1);
   const w = (h * cur.width) / cur.height;
   const x = st.px(c.x);
   const y = st.py(c.y);
@@ -80,8 +81,9 @@ const Char: React.FC<{c: Character}> = ({c}) => {
 
 /** Widest pose of the schedule, in screen space (feet line = bottom). */
 const charBox = (c: Character, st: Stage): Box => {
-  const h = c.height * st.k;
-  const w = Math.max(...c.schedule.map((s) => (h * s.width) / s.height));
+  const base = c.height * st.k;
+  const w = Math.max(...c.schedule.map((s) => (base * (s.scale ?? 1) * s.width) / s.height));
+  const h = Math.max(...c.schedule.map((s) => base * (s.scale ?? 1)));
   const x = st.px(c.x);
   const y = st.py(c.y);
   return {l: x - w / 2, r: x + w / 2, t: y - h, b: y};

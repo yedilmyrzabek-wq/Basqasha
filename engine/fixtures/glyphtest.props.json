@@ -5,26 +5,101 @@
  "fps": 30,
  "duration_frames": 90,
  "language": "kk",
- "voice": {"src": "", "volume": 1},
+ "voice": {
+  "src": "",
+  "volume": 1
+ },
  "music": null,
  "progress_bar": true,
  "sponsor_badge": null,
  "scenes": [
   {
-   "id": 1, "from": 0, "duration": 90,
-   "background": {"src": "library/style/samples/counter.jpg", "zoom_from": 1.0, "zoom_to": 1.04, "focus": [0.75, 0.55]},
-   "character": {"x": 260, "y": 900, "height": 420, "flip": false,
-     "schedule": [{"at": 0, "pose": "think", "src": "library/poses/pose_think.png", "width": 184, "height": 320}]},
+   "id": 1,
+   "from": 0,
+   "duration": 90,
+   "background": {
+    "src": "library/style/samples/study_desk.png",
+    "zoom_from": 1.0,
+    "zoom_to": 1.04,
+    "focus": [
+     0.75,
+     0.55
+    ]
+   },
+   "character": {
+    "x": 260,
+    "y": 900,
+    "height": 420,
+    "flip": false,
+    "schedule": [
+     {
+      "at": 0,
+      "pose": "think_chin",
+      "src": "library/poses/think_chin.png",
+      "width": 169,
+      "height": 619,
+      "scale": 1.0
+     }
+    ]
+   },
    "overlays": [
-    {"type": "label", "text": "ӘҒҚҢӨҰҮҺІ әғқңөұүһі", "x": 900, "y": 150, "at": 0},
-    {"type": "stamp", "text": "әғқңөұүһі", "x": 1500, "y": 420, "color": "red", "at": 0},
-    {"type": "counter", "value": 1250000, "suffix": " ₸", "text": "Құны: ғылым, өнер, үй", "x": 800, "y": 420, "color": "blue", "at": 0},
-    {"type": "label", "text": "Ұлы дала өңірі", "x": 800, "y": 700, "color": "yellow", "at": 0},
-    {"type": "coins", "x": 1200, "y": 750, "x2": 1700, "y2": 800, "count": 3, "at": 0},
-    {"type": "note", "text": "Дерек: stat.gov.kz — Қазақстан, 2025 ж.", "at": 0}
+    {
+     "type": "label",
+     "text": "ӘҒҚҢӨҰҮҺІ әғқңөұүһі",
+     "x": 900,
+     "y": 150,
+     "at": 0
+    },
+    {
+     "type": "stamp",
+     "text": "әғқңөұүһі",
+     "x": 1500,
+     "y": 420,
+     "color": "red",
+     "at": 0
+    },
+    {
+     "type": "counter",
+     "value": 1250000,
+     "suffix": " ₸",
+     "text": "Құны: ғылым, өнер, үй",
+     "x": 800,
+     "y": 420,
+     "color": "blue",
+     "at": 0
+    },
+    {
+     "type": "label",
+     "text": "Ұлы дала өңірі",
+     "x": 800,
+     "y": 700,
+     "color": "yellow",
+     "at": 0
+    },
+    {
+     "type": "coins",
+     "x": 1200,
+     "y": 750,
+     "x2": 1700,
+     "y2": 800,
+     "count": 3,
+     "at": 0
+    },
+    {
+     "type": "note",
+     "text": "Дерек: stat.gov.kz — Қазақстан, 2025 ж.",
+     "at": 0
+    }
    ]
   }
  ],
- "captions": [{"from": 0, "to": 90, "text": "Әке, ғалым, қала, аң, өзен, ұлт, үй, һауа, іс", "keyword": "ұлт"}],
+ "captions": [
+  {
+   "from": 0,
+   "to": 90,
+   "text": "Әке, ғалым, қала, аң, өзен, ұлт, үй, һауа, іс",
+   "keyword": "ұлт"
+  }
+ ],
  "sfx": []
 }
