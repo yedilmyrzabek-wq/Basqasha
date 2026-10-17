@@ -33,11 +33,12 @@ class AI:
 
     def idea(self, transcript: str, *, language: str, ctx: CallContext, source_title: str = "",
              source_minutes: float = 0, source_views: int | None = None,
-             operator_hint: str | None = None) -> dict[str, Any]:
+             operator_hint: str | None = None, target_seconds: int = 240, wpm: float = 110) -> dict[str, Any]:
         # idea uses the script model (Opus via Claude CLI): picking the angle is as important as the text
         return generate_idea(self.llm, transcript, language=language, ctx=ctx, model=self.settings.model_script,
                              source_title=source_title, source_minutes=source_minutes,
-                             source_views=source_views, operator_hint=operator_hint)
+                             source_views=source_views, operator_hint=operator_hint,
+                             target_seconds=target_seconds, wpm=wpm)
 
     def facts(self, brief: Mapping[str, Any], angle: Mapping[str, Any], *, language: str,
               ctx: CallContext, max_facts: int = 12) -> FactsResult:
@@ -78,14 +79,14 @@ class AI:
                  storyboard_doc: Mapping[str, Any], *, language: str, ctx: CallContext,
                  words_doc: Mapping[str, Any] | None = None, ai_disclosure: bool = False,
                  paid_promotion: bool = False, voice_plan_paid: bool | None = None,
-                 reference: OriginalityReference | None = None) -> dict[str, Any]:
+                 reference: OriginalityReference | None = None, **source: Any) -> dict[str, Any]:
         """Step 10: metadata.schema.json document (1 LLM call, +1 only to repair broken titles).
         words_doc gives exact chapter times (otherwise estimated from wpm_voice); reference = the
         OriginalityReference for the title-overlap check (ARCHITECTURE §4)."""
         return build_metadata(self.llm, self.settings.model_text, script_doc, facts_doc, storyboard_doc,
                               language=language, ctx=ctx, words_doc=words_doc, ai_disclosure=ai_disclosure,
                               paid_promotion=paid_promotion, voice_plan_paid=voice_plan_paid,
-                              reference=reference)
+                              reference=reference, **source)
 
 
 def build_ai(ledger: ICostLedger, settings: Settings | None = None, *, wpm: float | None = None,

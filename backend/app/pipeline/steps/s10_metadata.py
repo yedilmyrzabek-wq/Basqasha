@@ -13,9 +13,43 @@ from app.pipeline.media_state import aligned_track, current_storyboard, selected
 from app.pipeline.orchestrator import DONE, StepResult, job_log, register
 from app.providers.interfaces import CallContext
 from app.schemas import errors as schema_errors
-from app.storage import project_dir, write_text
+from app.config import get_settings
+from app.sources import SourceRepository
+from app.storage import project_dir, rel, write_text
 
 PAID_PLANS = ("starter", "creator", "pro")
+
+
+def character_block() -> str:
+    """The shared character description from library/character/PROMPTS.md (first code block after
+    «Общий блок»), so thumbnail prompts keep our kalpak stickman."""
+    f = get_settings().library_path / "character" / "PROMPTS.md"
+    try:
+        text = f.read_text(encoding="utf-8")
+        return text.split("Общий блок", 1)[1].split("```", 2)[1].strip()
+    except (OSError, IndexError):
+        return ""
+
+
+def source_thumbnail(project_id: uuid.UUID, video_id: str | None):
+    """Download the competitor's thumbnail once (data/projects/{id}/source/thumb.jpg)."""
+    import urllib.request
+
+    if not video_id:
+        return None
+    out = project_dir(project_id, "source") / "thumb.jpg"
+    if out.is_file() and out.stat().st_size > 1000:
+        return out
+    for name in ("maxresdefault.jpg", "hqdefault.jpg"):
+        try:
+            with urllib.request.urlopen(f"https://i.ytimg.com/vi/{video_id}/{name}", timeout=20) as r:
+                data = r.read()
+            if len(data) > 1000:
+                out.write_bytes(data)
+                return out
+        except Exception:  # noqa: BLE001 - no thumbnail is fine
+            continue
+    return None
 
 
 def checklist(db, project_id: uuid.UUID) -> dict[str, Any]:
@@ -40,7 +74,12 @@ def to_markdown(m: dict[str, Any]) -> str:
         lines += ["# Hashtags", " ".join(m["hashtags"]), ""]
     if m.get("tags"):
         lines += ["# Tags", ", ".join(m["tags"]), ""]
-    lines += ["# Thumbnail texts", *[f"- {t}" for t in m["thumbnail_texts"]], "", "# Checklist",
+    lines += ["# Thumbnail texts", *[f"- {t}" for t in m["thumbnail_texts"]], ""]
+    if m.get("thumbnail_prompts"):
+        lines += ["# Thumbnail prompts (Google Flow)", *[f"{i}. {t}" for i, t in enumerate(m["thumbnail_prompts"], 1)], ""]
+    if m.get("packaging_notes"):
+        lines += ["# Packaging analysis (source video)", m["packaging_notes"], ""]
+    lines += ["# Checklist",
               *[f"- {k}: {v}" for k, v in m["checklist"].items()], ""]
     return "\n".join(lines)
 
@@ -66,6 +105,9 @@ def run(project_id: uuid.UUID) -> StepResult:
             raise RuntimeError("No storyboard (step 6)")
         sb_doc, words_doc = sb.data, aligned_track(db, project_id).words_json
         chk = checklist(db, project_id)
+        src = SourceRepository(db).get(project_id)
+        src_title, src_views, src_vid = ((src.yt_title, src.yt_views, src.yt_video_id) if src else (None, None, None))
+    thumb = source_thumbnail(project_id, src_vid)
     facts_doc = {"language": ctx.language, "facts": ctx.facts}
     try:
         reference = originality_feed.load_reference(project_id)
@@ -78,7 +120,10 @@ def run(project_id: uuid.UUID) -> StepResult:
                          ctx=CallContext(project_id, "metadata"), words_doc=words_doc,
                          ai_disclosure=chk["ai_disclosure"], paid_promotion=chk["paid_promotion"],
                          voice_plan_paid=chk.get("voice_plan_paid"),
-                         reference=reference))
+                         reference=reference, source_title=src_title or "", source_views=src_views,
+                         source_thumb=thumb, character_block=character_block()))
+    if thumb:
+        m["source_thumbnail"] = rel(thumb)
     m["checklist"] = {**m.get("checklist", {}), **chk}
     with session_scope() as db:
         for e in schema_errors("metadata", m):

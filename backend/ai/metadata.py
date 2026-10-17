@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+from pathlib import Path
 from typing import Any, Mapping
 from urllib.parse import urlparse
 
@@ -84,16 +85,10 @@ def _problems(out: MetadataOut, reference: OriginalityReference | None) -> list[
             errs.append(f"title contains < or >: {t!r}")
         if sum(1 for w in _TOK.findall(t) if len(w) >= 3 and w.isupper() and not w.isdigit()) > 1:
             errs.append(f"title has ALL-CAPS words: {t!r}")
-    if sum(1 for t in titles if re.search(r"\d", t)) < 2:
-        errs.append("at least 2 titles must contain a number in digits")
-    if sum(1 for t in titles if t.endswith("?")) < 2:
-        errs.append("at least 2 titles must be questions ending with '?'")
-    if reference and reference.title:
-        src = set(_TOK.findall(reference.title.lower()))
-        for t in titles:
-            tok = set(_TOK.findall(t.lower()))
-            if src and tok and len(src & tok) / len(src | tok) >= 0.5:
-                errs.append(f"title too close to the source video title: {t!r}")
+    if sum(1 for t in titles if re.search(r"\d", t)) > 2:
+        errs.append("at most 2 titles may contain a number")
+    if not any(t.endswith("?") for t in titles):
+        errs.append("at least 1 title must be a question ending with '?'")
     if len(out.thumbnail_texts) != 3:
         errs.append(f"need exactly 3 thumbnail_texts, got {len(out.thumbnail_texts)}")
     for th in out.thumbnail_texts:
@@ -101,6 +96,8 @@ def _problems(out: MetadataOut, reference: OriginalityReference | None) -> list[
             errs.append(f"thumbnail text too long (<= 3 words, <= 18 chars): {th!r}")
         if th.strip().lower() in {t.lower() for t in titles}:
             errs.append(f"thumbnail text repeats a title: {th!r}")
+    if len(out.thumbnail_prompts) != 3:
+        errs.append(f"need exactly 3 thumbnail_prompts, got {len(out.thumbnail_prompts)}")
     return errs
 
 
@@ -129,7 +126,11 @@ def build_metadata(llm: ILLM, model: str, script_doc: Mapping[str, Any], facts_d
                    storyboard_doc: Mapping[str, Any], *, language: str, ctx: CallContext,
                    words_doc: Mapping[str, Any] | None = None, ai_disclosure: bool = False,
                    paid_promotion: bool = False, voice_plan_paid: bool | None = None,
-                   reference: OriginalityReference | None = None) -> dict[str, Any]:
+                   reference: OriginalityReference | None = None, source_title: str = "",
+                   source_views: int | None = None, source_thumb: Path | None = None,
+                   character_block: str = "") -> dict[str, Any]:
+    """source_* = the competitor video (title, views, downloaded thumbnail): its packaging is analysed
+    and title 1 / the thumbnail concept follow it (owner decision 2026-10-18)."""
     beats, total = beat_starts(script_doc, storyboard_doc, words_doc)
     chap = chapter_times(beats, total)
     verified = [{"id": f["id"], "claim": f["claim"], "value": f.get("value")}
@@ -137,14 +138,20 @@ def build_metadata(llm: ILLM, model: str, script_doc: Mapping[str, Any], facts_d
     p = load_prompt("metadata")
     values = dict(language_name=LANGUAGE_NAMES.get(language, language), script_title=script_doc.get("title", ""),
                   script_text=script_doc["text"], facts_json=json.dumps(verified, ensure_ascii=False),
-                  beats_json=json.dumps([{"beat": b, "at": _mmss(t)} for b, t in chap], ensure_ascii=False))
+                  beats_json=json.dumps([{"beat": b, "at": _mmss(t)} for b, t in chap], ensure_ascii=False),
+                  source_title=source_title or (reference.title if reference else "") or "-",
+                  source_views=f"{source_views:,}".replace(",", " ") if source_views else "unknown",
+                  thumb_note=("The source thumbnail is attached as an image: describe it exactly." if source_thumb
+                              else "The source thumbnail is not available: infer a winning concept from the title."),
+                  character_block=character_block or "a simple stickman mascot")
+    images = [source_thumb] if source_thumb else []
     out = llm.generate_json(prompt=p.render(**values, repair_note=""), response_model=MetadataOut,
-                            model=model, ctx=ctx, max_output_tokens=4000).value
+                            model=model, ctx=ctx, max_output_tokens=6000, images=images).value
     errs = _problems(out, reference)
     if errs:  # one repair call
         note = "\n## Fix these problems of your previous answer\n" + "\n".join(f"- {e}" for e in errs) + "\n"
         out = llm.generate_json(prompt=p.render(**values, repair_note=note), response_model=MetadataOut,
-                                model=model, ctx=ctx, max_output_tokens=4000).value
+                                model=model, ctx=ctx, max_output_tokens=6000, images=images).value
         left = _problems(out, reference)
         if left:
             log.warning("metadata still breaks rules after repair: %s", left)
@@ -167,6 +174,8 @@ def build_metadata(llm: ILLM, model: str, script_doc: Mapping[str, Any], facts_d
         "hashtags": hashtags,
         "tags": [t.strip() for t in out.tags if t.strip()][:15],
         "thumbnail_texts": [t.strip() for t in out.thumbnail_texts][:3],
+        "thumbnail_prompts": [t.strip() for t in out.thumbnail_prompts if t.strip()][:3],
+        "packaging_notes": out.packaging_notes.strip(),
         "checklist": {"made_for_kids": False, "ai_disclosure": bool(ai_disclosure),
                       "paid_promotion": bool(paid_promotion)},
     }

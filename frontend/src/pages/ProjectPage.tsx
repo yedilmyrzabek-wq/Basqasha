@@ -5,11 +5,12 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api, unwrap, type ProjectDetail, type StepKey, type StepState } from '@/api/client'
 import { useInvalidateProject, useProject, useRunStep, useStepLogs } from '@/api/hooks'
 import { ErrorBox, Loading, Notice, StepStatusBadge } from '@/components/common'
+import { MinutesInput } from '@/components/MinutesInput'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Input, Select } from '@/components/ui/input'
-import { DURATION_OPTIONS, PROJECT_STATUS, STEPS, WAIT_REASON, focusStep, stepState } from '@/lib/steps'
+import { Input } from '@/components/ui/input'
+import { PROJECT_STATUS, STEPS, WAIT_REASON, focusStep, stepState } from '@/lib/steps'
 import { cn, fmtDate, fmtDuration, fmtUsd } from '@/lib/utils'
 import { STEP_VIEWS } from '@/steps'
 
@@ -32,19 +33,11 @@ function ProjectHeader({ project }: { project: ProjectDetail }) {
         <Badge tone={st.tone}>{st.label}</Badge>
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">Длительность</span>
-          <Select
-            aria-label="Целевая длительность"
-            className="h-8 w-28"
-            value={project.target_seconds}
+          <MinutesInput
+            seconds={project.target_seconds}
             disabled={patch.isPending}
-            onChange={(e) => patch.mutate({ target_seconds: Number(e.target.value) })}
-          >
-            {DURATION_OPTIONS.map((s) => (
-              <option key={s} value={s}>
-                {fmtDuration(s)}
-              </option>
-            ))}
-          </Select>
+            onCommit={(sec) => patch.mutate({ target_seconds: sec })}
+          />
           {project.target_words != null && (
             <span className="text-muted-foreground">≈ {project.target_words} слов</span>
           )}

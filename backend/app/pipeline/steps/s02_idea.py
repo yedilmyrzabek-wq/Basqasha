@@ -1,4 +1,6 @@
-"""Step 2: brief + 3 localization angles from the transcript; waits for the operator's choice."""
+"""Step 2: brief + 3 presentation variants from the transcript. Variant 1 = the source video's own idea
+(owner decision 2026-10-18): it is chosen automatically and the pipeline goes on to facts; the operator
+may still switch to another variant on the Idea tab."""
 from __future__ import annotations
 
 import uuid
@@ -8,7 +10,7 @@ from sqlalchemy import delete
 from app.db import session_scope
 from app.models import Angle, Brief, Project
 from app.pipeline import ai_bridge
-from app.pipeline.orchestrator import StepResult, job_log, register
+from app.pipeline.orchestrator import DONE, StepResult, job_log, register
 from app.schemas import validate
 from app.sources import SourceRepository
 from app.storage import next_version, project_dir, write_json
@@ -37,6 +39,10 @@ def run(project_id: uuid.UUID) -> StepResult:
             row.data = doc
         db.execute(delete(Angle).where(Angle.project_id == project_id))
         for i, a in enumerate(doc["angles"], start=1):
-            db.add(Angle(project_id=project_id, idx=i, data=a, is_custom=False, chosen=False))
-        job_log(db, project_id, "idea", f"Brief + {len(doc['angles'])} angles -> {rel}")
-    return StepResult.wait("choose_angle")
+            db.add(Angle(project_id=project_id, idx=i, data=a, is_custom=False, chosen=(i == 1)))
+        p = db.get(Project, project_id)
+        if not p.title or p.title == yt_title:
+            p.title = doc["angles"][0].get("title", "") or p.title
+        job_log(db, project_id, "idea", f"Brief + {len(doc['angles'])} variants -> {rel}; "
+                f"auto-chosen: {doc['angles'][0].get('title')}")
+    return DONE

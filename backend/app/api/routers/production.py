@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app import app_settings
 from app.api.common import get_project, step_state
 from app.db import get_db, get_read_db
 from app.media import library, storyboard_rules
@@ -72,6 +73,7 @@ def _slots(db: Session, project_id: uuid.UUID) -> list[dict[str, Any]]:
     if sb is None:
         raise HTTPException(404, "No storyboard yet")
     sel = selected_images(db, project_id)
+    style = (app_settings.load(db).get("style_suffix") or "").strip()
     used: dict[str, list[int]] = {}
     for s in sb.data["scenes"]:
         used.setdefault(s["background"], []).append(s["id"])
@@ -79,6 +81,7 @@ def _slots(db: Session, project_id: uuid.UUID) -> list[dict[str, Any]]:
     for bg in sb.data["backgrounds"]:
         a = sel.get(bg["id"])
         out.append({"slot": bg["id"], "prompt": bg["prompt"],
+                    "flow_prompt": f"{bg['prompt'].strip()} {style}".strip(),
                     "url": file_url(a.path) if a is not None and a.path else None,
                     "qa_status": a.qa_status if a is not None else "pending",
                     "qa_notes": ((a.qa_report or {}).get("notes") if a is not None else None),
@@ -240,12 +243,13 @@ def get_metadata(project_id: uuid.UUID, db: Session = Depends(get_read_db)):
     m = db.get(Metadata, project_id)
     if m is None:
         raise HTTPException(404, "No metadata yet")
-    return m.data
+    return {**m.data, "source_thumbnail_url": file_url(m.data.get("source_thumbnail"))}
 
 
 @router.put("/metadata", tags=["content"])
 def save_metadata(project_id: uuid.UUID, body: dict[str, Any] = Body(...), db: Session = Depends(get_db)):
     get_project(db, project_id)
+    body.pop("source_thumbnail_url", None)
     errs = schema_errors("metadata", body)
     if errs:
         return invalid("Metadata schema validation failed", errs)

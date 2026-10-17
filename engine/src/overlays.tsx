@@ -91,7 +91,7 @@ const Label: React.FC<{o: Overlay}> = ({o}) => {
   const text = o.text ?? '';
   const yellow = o.color === 'yellow';
   const pad = 34 * st.k;
-  const {size, width} = fit(text, FONT, 800, 76 * st.k, 48 * st.k, st.W - 2 * MARGIN - 2 * pad);
+  const {size, width} = fit(text, FONT, 800, 64 * st.k, 44 * st.k, st.W - 2 * MARGIN - 2 * pad);
   const w = width + 2 * pad;
   const h = size * 1.55;
   const {x, y} = usePlace(st, st.px(o.x ?? 960), st.py(o.y ?? 300), w / 2, -h / 2, h / 2);

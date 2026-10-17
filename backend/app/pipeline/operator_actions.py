@@ -23,8 +23,9 @@ def current_script(db, project_id: uuid.UUID) -> Script | None:
                      .order_by(Script.version.desc()).limit(1))
 
 
-def approve_script(project_id: uuid.UUID) -> StepResult:
-    """«Утвердить»: re-check originality of the edited text, then freeze the version."""
+def approve_script(project_id: uuid.UUID, force: bool = False) -> StepResult:
+    """«Утвердить»: re-check originality of the edited text, then freeze the version.
+    force («Утвердить всё равно»): skip the check — the operator takes responsibility."""
     with session_scope() as db:
         s = current_script(db, project_id)
         if s is None:
@@ -32,11 +33,18 @@ def approve_script(project_id: uuid.UUID) -> StepResult:
         doc = sync_beats(s.data, s.text)
         script_id = s.id
     ai = ai_bridge.build(project_id)
-    report = dict(ai.checker.check(doc, originality_feed.load_reference(project_id), CallContext(project_id, "script")))
-    report.setdefault("verdict", "fail" if report.get("flagged_sentences") else "pass")
     tts = ai.tts(doc)
+    report: dict = {}
+    if not force:
+        report = dict(ai.checker.check(doc, originality_feed.load_reference(project_id),
+                                       CallContext(project_id, "script")))
+        report.setdefault("verdict", "fail" if report.get("flagged_sentences") else "pass")
     with session_scope() as db:
-        save_report(db, script_id, report, {"on_approve": True})
+        if force:
+            job_log(db, project_id, "script", "Approved by the operator WITHOUT the originality re-check (force)",
+                    "warning")
+        else:
+            save_report(db, script_id, report, {"on_approve": True})
         if report.get("verdict") == "fail":
             job_log(db, project_id, "script", "Originality check failed on approve "
                     f"(max_sim={report.get('max_similarity')}); edit the flagged sentences and approve again",
@@ -59,4 +67,5 @@ def approve_script(project_id: uuid.UUID) -> StepResult:
     return DONE
 
 
-ACTIONS = {"approve_script": approve_script, "apply_comments": apply_comments, "regenerate_image": regenerate}
+ACTIONS = {"approve_script": approve_script,
+           "force_approve_script": lambda project_id: approve_script(project_id, force=True), "apply_comments": apply_comments, "regenerate_image": regenerate}

@@ -20,10 +20,12 @@ def build(project_id: uuid.UUID | None = None):
     with session_scope() as db:
         cfg = app_settings.load(db)
         wpm = float(db.get(Project, project_id).wpm_voice) if project_id else float(cfg["wpm_voice"])
-    m = cfg["models"]
+    m, c = cfg["models"], cfg["claude"]
     settings = get_settings().model_copy(update={
         "model_text": m["text"], "model_script": m["script"], "model_cheap": m["cheap"],
-        "model_image": m["image"], "model_embed": m["embed"]})
+        "model_image": m["image"], "model_embed": m["embed"],
+        "claude_model_script": c["script"], "claude_model": c["text"], "claude_model_cheap": c["cheap"],
+        "claude_effort_script": c["effort"]})
     kw: dict[str, Any] = {}
     params = inspect.signature(build_ai).parameters
     if "similarity_threshold" in params:
@@ -36,9 +38,12 @@ def build(project_id: uuid.UUID | None = None):
 def generate_idea(project_id: uuid.UUID, transcript: str, *, language: str, source_title: str | None,
                   source_seconds: int | None, source_views: int | None) -> dict[str, Any]:
     """Step 2: brief.schema.json document (brief + exactly 3 angles)."""
+    with session_scope() as db:
+        p = db.get(Project, project_id)
+        target, wpm = int(p.target_seconds), float(p.wpm_voice)
     return build(project_id).idea(transcript, language=language, ctx=CallContext(project_id, "idea"),
                                   source_title=source_title or "", source_minutes=(source_seconds or 0) / 60,
-                                  source_views=source_views)
+                                  source_views=source_views, target_seconds=target, wpm=wpm)
 
 
 def research_facts(project_id: uuid.UUID, brief: Mapping[str, Any], angle: Mapping[str, Any],

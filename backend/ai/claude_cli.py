@@ -1,6 +1,8 @@
 """ILLM over the Claude Code CLI (`claude -p`, Claude subscription; ledger usd = 0).
 
-Text generation goes to Claude; embeddings and vision (images) are delegated to Gemini.
+Text generation goes to Claude; embeddings and the vision QA of generated backgrounds (step "images")
+are delegated to Gemini. Other image inputs (e.g. the competitor's thumbnail in step 10) are copied
+into the temp dir and Claude looks at them with its Read tool.
 `grounding=True` lets Claude use WebSearch/WebFetch, so the facts step cites real pages.
 The CLI runs in an empty temp dir with no settings, MCP servers or tools (unless grounding),
 which keeps each call light on the subscription limit.
@@ -45,13 +47,22 @@ class ClaudeCodeLLM:
     def generate_json(self, *, prompt: str, response_model: type[M], model: str, ctx: CallContext,
                       system: str | None = None, grounding: bool = False,
                       images: Sequence[Path] = (), max_output_tokens: int | None = None) -> LLMResult[M]:
-        if images:  # vision stays on Gemini
+        if images and ctx.step == "images":  # QA of generated backgrounds stays on Gemini (image generation)
             return self.gemini.generate_json(prompt=prompt, response_model=response_model, model=model, ctx=ctx,
                                              system=system, grounding=grounding, images=images,
                                              max_output_tokens=max_output_tokens)
         claude_model = self.model_map.get(model, self.model)
         schema = json.dumps(response_model.model_json_schema(), ensure_ascii=False)
         tools = ["WebSearch", "WebFetch"] if grounding else []
+        if images:
+            names = []
+            for i, img in enumerate(images):
+                dst = self.workdir / f"image_{i + 1}{Path(img).suffix.lower() or '.png'}"
+                shutil.copyfile(img, dst)
+                names.append(dst.name)
+            tools.append("Read")
+            prompt = ("First open and look at these image file(s) in the current directory with the Read tool: "
+                      + ", ".join(names) + ".\n\n" + prompt)
         cmd = [self.cli, "-p", "--output-format", "json", "--model", claude_model,
                "--strict-mcp-config", "--setting-sources", "", "--json-schema", schema,
                "--system-prompt", system or SYSTEM, "--tools", ",".join(tools) if tools else ""]

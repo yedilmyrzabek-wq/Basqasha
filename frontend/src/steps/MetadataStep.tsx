@@ -8,6 +8,56 @@ import { Input, Label } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { isNotFound, type StepViewProps } from './types'
 
+type ThumbExtra = {
+  thumbnail_texts: string[]
+  thumbnail_prompts?: string[]
+  packaging_notes?: string
+  source_thumbnail_url?: string | null
+}
+
+/** «Обложка для YouTube»: how the competitor packaged the video + English prompts for Google Flow. */
+function ThumbnailSection({ m }: { m: ThumbExtra }) {
+  const prompts = m.thumbnail_prompts ?? []
+  if (!prompts.length && !m.packaging_notes) return null
+  return (
+    <section className="grid gap-3 rounded-md border border-brand-blue/30 p-3">
+      <h3 className="font-semibold">Обложка для YouTube (Google Flow)</h3>
+      <div className="grid gap-3 md:grid-cols-[260px_1fr]">
+        {m.source_thumbnail_url && (
+          <figure className="grid gap-1">
+            <img src={m.source_thumbnail_url} alt="Обложка исходного видео" className="w-full rounded-md border" />
+            <figcaption className="text-xs text-muted-foreground">Обложка исходного видео (конкурент)</figcaption>
+          </figure>
+        )}
+        {m.packaging_notes && (
+          <div className="grid content-start gap-1">
+            <p className="text-xs font-medium text-muted-foreground">Почему у конкурента работает и что берём</p>
+            <p className="whitespace-pre-wrap">{m.packaging_notes}</p>
+          </div>
+        )}
+      </div>
+      {prompts.map((p, i) => (
+        <div key={i} className="grid gap-1.5 rounded-md border bg-paper p-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">
+              Промпт {i + 1}
+              {m.thumbnail_texts[i] ? ` — текст «${m.thumbnail_texts[i]}»` : ''}
+            </span>
+            <CopyButton text={p} />
+          </div>
+          <p className="font-mono text-xs">{p}</p>
+        </div>
+      ))}
+      {!!prompts.length && (
+        <p className="text-xs text-muted-foreground">
+          Скопируй промпт в Google Flow, приложи эталон персонажа (library/character/reference_sheet.jpg). Если
+          казахские буквы вышли криво — сгенерируй без текста и добавь надпись в редакторе.
+        </p>
+      )}
+    </section>
+  )
+}
+
 export default function MetadataStep({ project, state }: StepViewProps) {
   const id = project.id
   const invalidate = useInvalidateProject(id)
@@ -68,6 +118,7 @@ export default function MetadataStep({ project, state }: StepViewProps) {
           {!!m.hashtags?.length && <p className="text-brand-blue">{m.hashtags.join(' ')}</p>}
         </section>
       )}
+      <ThumbnailSection m={m as unknown as ThumbExtra} />
       <section className="grid gap-2">
         <h3 className="font-semibold">Текст на превью (обложку)</h3>
         <div className="flex flex-wrap gap-2">

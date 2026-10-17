@@ -29,11 +29,14 @@ CHUNK = 30
 WINDOW = 40                     # max words per scene considered by the DP
 SFX_PER_MIN = 20
 
-CHAR = {"x": 300, "y": 900, "height": 470, "flip": False}
+# Character: bigger (owner 2026-10-18: "too small") — ~60% of the frame height, feet just above the captions.
+CHAR = {"x": 300, "y": 950, "height": 640, "flip": False}
 FOCUS = [(0.5, 0.5), (0.68, 0.42), (0.32, 0.6), (0.5, 0.25)]   # pairwise >= 0.15 apart
 ZOOM = [(1.0, 1.08), (1.1, 1.02), (1.0, 1.06), (1.08, 1.0)]
-TEXT_SLOTS = [(1240, 300), (1240, 480), (1240, 660)]
-STAMP_XY, NOTE_XY = (1480, 640), (1460, 90)
+# Labels go to the calm upper band next to the character's head (backgrounds keep the subject in the
+# right two-thirds and the top calm), not onto the main object in the middle of the picture.
+TEXT_SLOTS = [(820, 130), (1300, 130), (820, 270)]
+STAMP_XY, NOTE_XY = (1480, 640), (1520, 270)
 ARROW = (980, 400, 600, 560)
 COINS = (1500, 180, 400, 720)
 HOOK_POSES = ("shock", "think")
@@ -48,7 +51,7 @@ def _clean(w: str) -> str:
 
 
 def scene_count(seconds: float) -> int:
-    return max(30, min(60, round(seconds / SEC_PER_SCENE)))
+    return max(8, min(400, round(seconds / SEC_PER_SCENE)))  # any length (1-60 min), ~5 s per scene
 
 
 def bg_count(n_scenes: int, wanted: int = 30) -> int:

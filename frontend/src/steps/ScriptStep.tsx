@@ -113,6 +113,15 @@ function ScriptEditor({ project, script, waiting }: { project: StepViewProps['pr
     },
     onSettled: invalidate,
   })
+  // «Утвердить всё равно»: no originality re-check, works whatever the step status (failed, warnings…)
+  const force = useMutation({
+    mutationFn: async () => {
+      if (dirty) await save.mutateAsync()
+      const r = await fetch(`/api/projects/${id}/script/approve?force=true`, { method: 'POST' })
+      if (!r.ok) throw new Error((await r.text()) || `HTTP ${r.status}`)
+    },
+    onSettled: invalidate,
+  })
 
   const o = script.originality
   return (
@@ -164,6 +173,19 @@ function ScriptEditor({ project, script, waiting }: { project: StepViewProps['pr
         >
           {approve.isPending ? 'Проверяем…' : 'Утвердить'}
         </Button>
+        {!(script.approved && !dirty) && (
+          <Button
+            variant="outline"
+            className="border-brand-red/50 text-brand-red"
+            disabled={force.isPending || approve.isPending || !text.trim()}
+            onClick={() => {
+              if (window.confirm('Утвердить без проверки оригинальности? Ответственность на тебе.')) force.mutate()
+            }}
+            title="Утвердить сразу, даже если статус проверки плохой (без повторной проверки)"
+          >
+            {force.isPending ? 'Утверждаем…' : 'Утвердить всё равно'}
+          </Button>
+        )}
         {dirty && (
           <Button variant="ghost" onClick={() => setText(script.text ?? '')}>
             Отменить правки
@@ -175,7 +197,7 @@ function ScriptEditor({ project, script, waiting }: { project: StepViewProps['pr
           </Button>
         )}
       </div>
-      <ErrorBox error={save.error ?? approve.error} />
+      <ErrorBox error={save.error ?? approve.error ?? force.error} />
       {!within && words > 0 && (
         <Notice>
           Длина вне допуска: нужно {Math.round(target * 0.92)}–{Math.round(target * 1.08)} слов. Утвердить можно, но длительность

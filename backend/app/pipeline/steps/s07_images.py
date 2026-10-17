@@ -1,6 +1,7 @@
 """Step 7: one background image per storyboard slot (Gemini + vision QA in backend/ai), or the
 placeholder samples from library/style/samples (setting image_source = "samples" or the
-use-samples endpoint) so the pipeline runs without image billing. A slot without a usable image
+use-samples endpoint) so the pipeline runs without image billing, or "manual": the operator gets one
+English prompt per slot (prompt + style suffix), makes the images in Google Flow and uploads them. A slot without a usable image
 -> waiting_operator / manual_images (regenerate, edit prompt, upload own, or use samples)."""
 from __future__ import annotations
 
@@ -123,7 +124,7 @@ def process(project_id: uuid.UUID, only: str | None = None) -> StepResult:
                 if not (image_ok(sel.get(bg["id"])) and sel[bg["id"]].prompt == bg["prompt"])]
     with session_scope() as db:
         job_log(db, project_id, "images", f"{len(todo)} of {len(backgrounds)} slot(s) to make "
-                f"({'library samples' if source == 'samples' and not only else 'Gemini'})")
+                f"({ {'samples': 'library samples', 'manual': 'manual: prompts for Google Flow'}.get(source, 'Gemini') if not only else 'Gemini'})")
 
     ai = None
     blocked: str | None = None
@@ -132,6 +133,10 @@ def process(project_id: uuid.UUID, only: str | None = None) -> StepResult:
         if source == "samples" and not only:
             with session_scope() as db:
                 use_sample(db, project_id, slot, bg["prompt"], backgrounds.index(bg))
+        elif source == "manual" and not only:
+            with session_scope() as db:
+                _new_asset(db, project_id, slot, bg["prompt"], path=None, attempts=0, qa_status="needs_manual",
+                           qa_report={"notes": "ручной режим: скопируй промпт, сделай картинку в Google Flow и загрузи"})
         elif blocked:
             with session_scope() as db:
                 _new_asset(db, project_id, slot, bg["prompt"], path=None, attempts=0, qa_status="needs_manual",

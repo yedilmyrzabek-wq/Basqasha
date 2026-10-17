@@ -187,8 +187,16 @@ def save_script(project_id: uuid.UUID, body: ScriptSave, db: Session = Depends(g
 
 
 @router.post("/script/approve", status_code=202)
-def approve_script(project_id: uuid.UUID, db: Session = Depends(get_db)):
+def approve_script(project_id: uuid.UUID, force: bool = False, db: Session = Depends(get_db)):
+    """?force=true = «Утвердить всё равно»: no originality re-check; also works when the script step
+    failed or is waiting for any reason, as long as a script exists."""
     ps = orchestrator.get_step(db, project_id, "script")
-    if not (ps.status == "waiting_operator" and ps.wait_reason == "approve_script"):
+    if force:
+        if ps.status == "running":
+            raise orchestrator.StepConflict("Script step is running")
+        if current_script(db, project_id) is None:
+            raise HTTPException(404, "No script yet")
+    elif not (ps.status == "waiting_operator" and ps.wait_reason == "approve_script"):
         raise orchestrator.StepConflict(f"Script is not waiting for approval (status {ps.status})")
-    return step_state(orchestrator.request_run(db, project_id, "script", task="approve_script"))
+    return step_state(orchestrator.request_run(db, project_id, "script", check=not force,
+                                               task="force_approve_script" if force else "approve_script"))

@@ -10,9 +10,9 @@ import { Input, Label, Select, Textarea } from '@/components/ui/input'
 import { isNotFound, type StepViewProps } from './types'
 
 const STATUS: Record<Fact['status'], { label: string; tone: BadgeTone }> = {
-  verified: { label: 'проверен', tone: 'green' },
-  unverified: { label: 'не проверен', tone: 'yellow' },
-  conflicting: { label: 'противоречит', tone: 'red' },
+  verified: { label: 'пройден', tone: 'green' },
+  unverified: { label: 'не найден — проверь', tone: 'yellow' },
+  conflicting: { label: 'похоже на ошибку — проверь', tone: 'red' },
   rejected: { label: 'отклонён', tone: 'neutral' },
 }
 
@@ -197,9 +197,16 @@ export default function FactsStep({ project, state }: StepViewProps) {
               ) : null,
             )}
           </div>
+          {(counts.unverified ?? 0) + (counts.conflicting ?? 0) > 0 ? (
+            <Notice tone="yellow">
+              Проверь {(counts.unverified ?? 0) + (counts.conflicting ?? 0)} факт(а): жёлтые не нашлись в интернете,
+              красные похожи на ошибку. Остальные примерно подтверждаются — их можно не смотреть.
+            </Notice>
+          ) : (
+            <Notice tone="blue">Все факты примерно подтверждаются источниками — проверять не нужно.</Notice>
+          )}
           <p className="text-xs text-muted-foreground">
-            Непроверенные, спорные и отклонённые факты не используются как цифры в сценарии. Правка фактов делает сценарий
-            устаревшим.
+            Как цифры в сценарии используются только «пройденные» факты. Правка фактов делает сценарий устаревшим.
           </p>
           <div className="overflow-x-auto rounded-md border">
             <table className="w-full text-sm">

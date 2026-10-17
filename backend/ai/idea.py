@@ -80,7 +80,7 @@ def _to_doc(out: IdeaOut, language: str, d: int) -> dict[str, Any]:
 
 def generate_idea(llm: ILLM, transcript: str, *, language: str, ctx: CallContext, model: str,
                   source_title: str = "", source_minutes: float = 0, source_views: int | None = None,
-                  operator_hint: str | None = None) -> dict[str, Any]:
+                  operator_hint: str | None = None, target_seconds: int = 240, wpm: float = 110) -> dict[str, Any]:
     prompt = load_prompt("idea")
     src_ngrams = _ngrams(_tokens(transcript + "\n" + source_title))
     banned: list[str] = []
@@ -89,6 +89,7 @@ def generate_idea(llm: ILLM, transcript: str, *, language: str, ctx: CallContext
         text = prompt.render(
             language_name=LANGUAGE_NAMES[language], source_title=source_title or "-",
             source_minutes=f"{source_minutes:.0f}", transcript=transcript,
+            target_minutes=f"{target_seconds / 60:g}", target_words=str(round(wpm * target_seconds / 60)),
             operator_hint=f"\nOperator hint: {operator_hint}" if operator_hint else "",
             banned_phrases=("- These phrases were copied in a previous attempt and are forbidden: "
                             + "; ".join(f'"{p}"' for p in banned)) if banned else "")

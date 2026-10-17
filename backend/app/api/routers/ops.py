@@ -51,10 +51,63 @@ def get_app_settings(db: Session = Depends(get_read_db)):
 def save_app_settings(body: dict[str, Any] = Body(...), db: Session = Depends(get_db)):
     if body.get("script_writer") not in (None, "gemini", "claude_code"):
         raise HTTPException(422, "script_writer must be gemini or claude_code")
+    if body.get("image_source") not in (None, "gemini", "manual", "samples"):
+        raise HTTPException(422, "image_source must be gemini, manual or samples")
     ts = body.get("target_seconds")
-    if ts is not None and not 180 <= int(ts) <= 300:
-        raise HTTPException(422, "target_seconds must be 180..300")
+    if ts is not None and not 60 <= int(ts) <= 3600:
+        raise HTTPException(422, "target_seconds must be 60..3600 (1-60 min)")
     return app_settings.with_keys(app_settings.save(db, body))
+
+
+CLAUDE_MODELS = [
+    {"id": "claude-opus-5-5", "label": "Opus 5.5 — лучший текст (медленнее)"},
+    {"id": "claude-sonnet-5-5", "label": "Sonnet 5.5 — быстрый и умный"},
+    {"id": "claude-haiku-5-5", "label": "Haiku 5.5 — самый быстрый (проверки)"},
+    {"id": "claude-fable-5-1", "label": "Fable 5.1"},
+    {"id": "opus", "label": "opus — последний Opus"},
+    {"id": "sonnet", "label": "sonnet — последний Sonnet"},
+    {"id": "haiku", "label": "haiku — последний Haiku"},
+]
+_SKIP = ("tts", "live", "transcribe", "robotics", "computer-use", "native-audio", "customtools", "lyria",
+         "antigravity", "deep-research", "omni", "aqa", "veo", "gemma")
+_gemini_cache: tuple[float, dict[str, list[str]]] | None = None
+
+
+def _gemini_models() -> dict[str, list[str]]:
+    """Gemini models of this API key, grouped (text / image / embed); cached for an hour."""
+    import time
+
+    global _gemini_cache
+    if _gemini_cache and time.monotonic() - _gemini_cache[0] < 3600:
+        return _gemini_cache[1]
+    out: dict[str, list[str]] = {"text": [], "image": [], "embed": []}
+    s = get_settings()
+    if not s.gemini_api_key:
+        return out
+    from google import genai
+
+    for m in genai.Client(api_key=s.gemini_api_key).models.list():
+        name = (m.name or "").removeprefix("models/")
+        acts = m.supported_actions or []
+        if "embedContent" in acts:
+            out["embed"].append(name)
+        elif "generateContent" in acts and not any(k in name for k in _SKIP):
+            out["image" if ("image" in name or "banana" in name) else "text"].append(name)
+    for v in out.values():
+        v.sort(reverse=True)
+    _gemini_cache = (time.monotonic(), out)
+    return out
+
+
+@router.get("/models")
+def list_models():
+    """Choices for the model dropdowns in Settings."""
+    try:
+        gemini, err = _gemini_models(), None
+    except Exception as e:  # noqa: BLE001 - no network / bad key: the page still works
+        gemini, err = {"text": [], "image": [], "embed": []}, str(e)[:200]
+    return {"claude": CLAUDE_MODELS, "claude_effort": ["low", "medium", "high", "xhigh", "max"],
+            "gemini": gemini, "gemini_error": err}
 
 
 def _costs(rows: list[CostEntry], limit: float, warn: float | None) -> dict:

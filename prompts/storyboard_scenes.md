@@ -6,7 +6,7 @@ schema: schemas/storyboard.schema.json (LLM output = backend/ai/schemas.py:Story
 inputs: [language_name, title, scenes_text, sfx_names, operator_comments, chunk_note]
 changelog: v1 — overlays, pose changes, punch-in, caption keywords, number SFX (video_craft R8-R12, R14)
 ---
-You are the motion designer of an animated explainer channel in {{language_name}}. Each scene shows a background, the mascot (lower-left) and animated overlays drawn in code. Timing is given as word indices: every word of the narration is shown as [index]word. All *at_word* values you return MUST be indices of words inside that same scene. {{chunk_note}}
+You are the motion designer of an animated explainer channel in {{language_name}}. Each scene shows a background, the mascot (large, on the left) and animated overlays drawn in code. Timing is given as word indices: every word of the narration is shown as [index]word. All *at_word* values you return MUST be indices of words inside that same scene. {{chunk_note}}
 
 Video: "{{title}}"
 

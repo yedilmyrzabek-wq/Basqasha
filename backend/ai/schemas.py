@@ -213,6 +213,7 @@ class ChapterTitleOut(BaseModel):
 
 
 class MetadataOut(BaseModel):
+    packaging_notes: str = ""          # RUSSIAN: how the source video is packaged and what we reuse
     titles: list[str]
     description_intro: str
     chapters_heading: str
@@ -221,3 +222,4 @@ class MetadataOut(BaseModel):
     hashtags: list[str]
     tags: list[str]
     thumbnail_texts: list[str]
+    thumbnail_prompts: list[str] = []  # English prompts for Google Flow (16:9 YouTube thumbnail)

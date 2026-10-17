@@ -167,6 +167,12 @@ export default function IdeaStep({ project, state }: StepViewProps) {
         </div>
       )}
 
+      {angles.length > 0 && (
+        <p className="text-sm text-muted-foreground">
+          Система сама взяла вариант 1 — идею присланного видео (тема и главный вопрос те же, текст и картинки — наши) и
+          пошла дальше. Остальные варианты — только если захочешь сменить подачу.
+        </p>
+      )}
       <div className="grid gap-3 md:grid-cols-3">
         {angles.map((row) => {
           const a = row.data

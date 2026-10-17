@@ -77,16 +77,14 @@ def _grounded(llm: ILLM, brief, angle, language, ctx, model, max_facts) -> Facts
         language_name=LANGUAGE_NAMES[language], brief_json=brief, angle_json=angle,
         max_facts=str(max_facts), sensitive_note=_sensitive_note(brief))
     res = llm.generate_json(prompt=text, response_model=FactsOut, model=model, ctx=ctx, grounding=True)
-    found = {urllib.parse.urlparse(_resolve(u)).netloc.removeprefix("www.") for u in res.grounding_urls}
     facts = []
     for f in res.value.facts:
         sources = [{"url": s.url, "title": s.title, "is_primary": bool(s.is_primary or _is_primary(s.url))}
                    for s in f.sources if s.url.startswith("http")]
         status = f.status
         note = f.note or ""
-        domains = {urllib.parse.urlparse(s["url"]).netloc.removeprefix("www.") for s in sources}
-        if status == "verified" and (not sources or (found and not domains & found)):
-            status, note = "unverified", (note + " [авто: источник не найден в результатах поиска]").strip()
+        if status == "verified" and not sources:  # lenient (owner 2026-10-18): any real source is enough
+            status, note = "unverified", (note + " [авто: нет ссылки на источник]").strip()
         fact = {"claim": fix_homoglyphs(f.claim), "value": f.value, "status": status, "sources": sources}
         if note:
             fact["note"] = note

@@ -104,7 +104,14 @@ def extract(img: Image.Image, expected: int) -> list[Image.Image]:
     lab, _ = ndimage.label(close)
     edge = np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))
     bgmask = np.isin(lab, edge[edge > 0])
-    fg = ~bgmask
+    # enclosed paper (between legs, arm and body): not connected to the border, but its mean colour is
+    # the paper's (distance 1-8); white face/shoes are 19-30. Some kalpak panels are paper-coloured too,
+    # so holes in the top 30% of a figure (head + hat) are put back below.
+    ids = np.arange(1, lab.max() + 1)
+    mean = np.stack([ndimage.mean(rgb[..., ch], lab, ids) for ch in range(3)], axis=1)
+    paper = np.linalg.norm(mean - bg, axis=1) < 9.0
+    holes = np.isin(lab, ids[paper]) & ~bgmask
+    fg = ~(bgmask | holes)
     fg = ndimage.binary_opening(fg, iterations=1)
 
     comps, n = ndimage.label(fg, structure=np.ones((3, 3)))
@@ -135,6 +142,9 @@ def extract(img: Image.Image, expected: int) -> list[Image.Image]:
         m = np.isin(comps, [k + 1 for k in members])
         ys, xs = np.where(m)
         y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+        top = np.zeros_like(m)
+        top[y0:y0 + int(0.3 * (y1 - y0)), x0:x1] = True
+        m |= holes & top
         crop = rgba[y0:y1, x0:x1].copy()
         crop[..., 3] = (m[y0:y1, x0:x1] * 255).astype(np.uint8)
         # soften the 1-px alpha edge a little

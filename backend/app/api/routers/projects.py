@@ -26,7 +26,7 @@ class ProjectCreate(BaseModel):
     transcript: str | None = None
     title: str | None = None
     language: Literal["kk", "ru", "en"] = "kk"
-    target_seconds: int | None = Field(None, ge=180, le=300)
+    target_seconds: int | None = Field(None, ge=60, le=3600)
     sponsored: bool = False
 
     @model_validator(mode="after")
@@ -38,7 +38,7 @@ class ProjectCreate(BaseModel):
 
 class ProjectUpdate(BaseModel):
     title: str | None = None
-    target_seconds: int | None = Field(None, ge=180, le=300)
+    target_seconds: int | None = Field(None, ge=60, le=3600)
     sponsored: bool | None = None
     sponsor_name: str | None = None
     budget_usd: float | None = Field(None, ge=0)

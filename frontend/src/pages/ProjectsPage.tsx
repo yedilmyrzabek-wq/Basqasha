@@ -8,8 +8,9 @@ import { Empty, ErrorBox, Loading } from '@/components/common'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input, Label, Select, Textarea } from '@/components/ui/input'
-import { DURATION_OPTIONS, PROJECT_STATUS, stepTitle } from '@/lib/steps'
+import { Input, Label, Textarea } from '@/components/ui/input'
+import { PROJECT_STATUS, stepTitle } from '@/lib/steps'
+import { MinutesInput } from '@/components/MinutesInput'
 import { cn, fmtDate, fmtDuration, fmtUsd } from '@/lib/utils'
 
 function NewProjectForm({ onClose }: { onClose: () => void }) {
@@ -111,13 +112,7 @@ function NewProjectForm({ onClose }: { onClose: () => void }) {
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="np-dur">Длительность</Label>
-              <Select id="np-dur" value={target} onChange={(e) => setSeconds(Number(e.target.value))}>
-                {DURATION_OPTIONS.map((s) => (
-                  <option key={s} value={s}>
-                    {fmtDuration(s)} мин
-                  </option>
-                ))}
-              </Select>
+              <MinutesInput id="np-dur" seconds={target} onCommit={setSeconds} />
             </div>
             <label className="flex h-9 items-center gap-2 text-sm">
               <input type="checkbox" checked={sponsored} onChange={(e) => setSponsored(e.target.checked)} />

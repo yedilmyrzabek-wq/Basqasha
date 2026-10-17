@@ -3,14 +3,14 @@ import { ImageOff } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { api, formData, unwrap, type Schemas } from '@/api/client'
 import { projectKey, stepVersionKey, useInvalidateProject } from '@/api/hooks'
-import { Empty, ErrorBox, Loading } from '@/components/common'
+import { CopyButton, Empty, ErrorBox, Loading } from '@/components/common'
 import { Badge, type BadgeTone } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/input'
 import { isNotFound, type StepViewProps } from './types'
 
-type Slot = Schemas['ImageSlot']
+type Slot = Schemas['ImageSlot'] & { flow_prompt?: string }
 const QA: Record<NonNullable<Slot['qa_status']>, { label: string; tone: BadgeTone }> = {
   pending: { label: 'проверка', tone: 'neutral' },
   passed: { label: 'QA пройден', tone: 'green' },
@@ -84,9 +84,12 @@ function SlotCard({ projectId, slot }: { projectId: string; slot: Slot }) {
             </div>
           </>
         ) : (
-          <p className="line-clamp-3 text-xs text-muted-foreground" title={slot.prompt}>
-            {slot.prompt}
-          </p>
+          <div className="flex items-start gap-1.5">
+            <p className="line-clamp-3 flex-1 text-xs text-muted-foreground" title={slot.flow_prompt ?? slot.prompt}>
+              {slot.prompt}
+            </p>
+            <CopyButton text={slot.flow_prompt ?? slot.prompt ?? ''} label="" aria-label="Копировать промпт для Flow" />
+          </div>
         )}
         <div className="flex flex-wrap gap-1.5">
           <Button size="sm" variant="outline" disabled={regen.isPending} onClick={() => regen.mutate(undefined)}>
@@ -113,6 +116,79 @@ function SlotCard({ projectId, slot }: { projectId: string; slot: Slot }) {
         <ErrorBox error={regen.error ?? upload.error} />
       </div>
     </Card>
+  )
+}
+
+const uploadOne = async (projectId: string, slot: string, file: File) => {
+  const fd = new FormData()
+  fd.append('file', file)
+  const r = await fetch(`/api/projects/${projectId}/images/${slot}/upload`, { method: 'POST', body: fd })
+  if (!r.ok) throw new Error(`${slot}: ${(await r.text()) || r.status}`)
+}
+
+/**
+ * Manual mode: copy all prompts for Google Flow, then upload many files at once. A file whose name contains
+ * a slot id (bg07.png, bg07_flow.jpg) goes to that slot; the rest fill the empty slots in name order.
+ */
+function ManualBar({ projectId, slots, disabled }: { projectId: string; slots: Slot[]; disabled: boolean }) {
+  const invalidate = useInvalidateProject(projectId)
+  const input = useRef<HTMLInputElement>(null)
+  const [done, setDone] = useState<string | null>(null)
+  const empty = slots.filter((s) => !s.url)
+  const all = slots.map((s) => `${s.slot}: ${s.flow_prompt ?? s.prompt}`).join('\n\n')
+  const emptyText = empty.map((s) => `${s.slot}: ${s.flow_prompt ?? s.prompt}`).join('\n\n')
+  const bulk = useMutation({
+    mutationFn: async (files: File[]) => {
+      const ids = slots.map((s) => s.slot ?? '')
+      const byName = new Map<string, File>()
+      const rest: File[] = []
+      for (const f of [...files].sort((a, b) => a.name.localeCompare(b.name))) {
+        const m = f.name.toLowerCase().match(/bg\d+/)
+        const id = m && ids.includes(m[0]) ? m[0] : null
+        if (id && !byName.has(id)) byName.set(id, f)
+        else rest.push(f)
+      }
+      for (const s of empty) if (!byName.has(s.slot ?? '') && rest.length) byName.set(s.slot ?? '', rest.shift()!)
+      for (const [slot, f] of byName) await uploadOne(projectId, slot, f)
+      return byName.size
+    },
+    onSuccess: (n) => setDone(`Загружено: ${n}`),
+    onSettled: invalidate,
+  })
+  return (
+    <div className="grid gap-2 rounded-md border border-brand-blue/30 p-3 text-sm">
+      <div className="flex flex-wrap items-center gap-2">
+        <b>Ручной режим (Google Flow)</b>
+        <span className="text-muted-foreground">
+          без картинки: {empty.length} из {slots.length}
+        </span>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <CopyButton text={emptyText || all} label={empty.length ? `Копировать промпты пустых (${empty.length})` : 'Копировать все промпты'} />
+        {empty.length > 0 && empty.length < slots.length && <CopyButton text={all} label="Копировать все" />}
+        <Button size="sm" variant="accent" disabled={disabled || bulk.isPending} onClick={() => input.current?.click()}>
+          {bulk.isPending ? 'Загружаем…' : 'Загрузить пачкой'}
+        </Button>
+        <input
+          ref={input}
+          type="file"
+          multiple
+          accept="image/png,image/jpeg,image/webp"
+          className="hidden"
+          onChange={(e) => {
+            const fs = Array.from(e.target.files ?? [])
+            if (fs.length) bulk.mutate(fs)
+            e.target.value = ''
+          }}
+        />
+        {done && <span className="text-xs text-[#2b7a44]">{done}</span>}
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Назови файлы как слот (bg01.png, bg02.png…) — тогда каждый попадёт на своё место. Без номера файлы заполнят пустые
+        слоты по порядку. В каждом промпте уже есть стиль; приложи в Flow 1–2 образца из library/style/samples.
+      </p>
+      <ErrorBox error={bulk.error} />
+    </div>
   )
 }
 
@@ -156,6 +232,9 @@ export default function ImagesStep({ project, state }: StepViewProps) {
   if (!slots.length) return <Empty>{state.status === 'running' ? 'Генерируем картинки…' : 'Картинок пока нет.'}</Empty>
   return (
     <div className="grid gap-3">
+      {(state.wait_reason === 'manual_images' || slots.some((s) => !s.url)) && (
+        <ManualBar projectId={id} slots={slots} disabled={state.status === 'running'} />
+      )}
       <SamplesBar projectId={id} disabled={state.status === 'running'} />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {slots.map((s) => (
