@@ -25,10 +25,10 @@ class Settings(BaseSettings):
     model_embed: str = "gemini-embedding-2"
     script_writer: str = "gemini"
     claude_cli: str = "claude"
-    text_llm: str = "claude_code"          # claude_code | gemini — who does ALL text steps
     claude_model: str = "sonnet"           # idea, facts, judge, checks
     claude_model_script: str = "claude-opus-5-5"  # idea (step 2) + Kazakh script writing / rewriting
     claude_effort_script: str = "medium"
+    claude_model_cheap: str = "haiku"      # quick checks (word count / policy)
 
     elevenlabs_api_enabled: bool = False
     youtube_api_enabled: bool = False

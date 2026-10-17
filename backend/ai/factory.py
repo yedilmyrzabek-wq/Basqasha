@@ -15,7 +15,7 @@ from ai.idea import generate_idea
 from ai.images import GeminiImageProvider, generate_background
 from ai.metadata import build_metadata
 from ai.originality import GeminiOriginalityChecker, run_originality
-from ai.script import ClaudeCodeScriptWriter, GeminiScriptWriter
+from ai.script import GeminiScriptWriter
 from ai.storyboard import build_storyboard
 from ai.tts import TtsExport, export_tts
 
@@ -26,7 +26,7 @@ TEXT_FALLBACK = "gemini-3.6-flash"
 class AI:
     settings: Settings
     llm: GeminiLLM | ClaudeCodeLLM
-    writer: GeminiScriptWriter | ClaudeCodeScriptWriter
+    writer: GeminiScriptWriter
     checker: GeminiOriginalityChecker
     images: GeminiImageProvider
     style_suffix: str = STYLE_SUFFIX       # operator setting settings.data.style_suffix (pass to build_ai)
@@ -99,19 +99,23 @@ def build_ai(ledger: ICostLedger, settings: Settings | None = None, *, wpm: floa
         s.model_cheap: s.model_text,
     })
     llm: GeminiLLM | ClaudeCodeLLM = gemini
-    if s.text_llm == "claude_code":
-        # All text steps via the Claude subscription; Gemini only for embeddings and images.
+    # "Кто пишет сценарий" in Settings: claude_code = ALL text steps via the Claude subscription
+    # (Opus: idea + script, Sonnet: facts/storyboard/judge/metadata, Haiku: quick checks);
+    # Gemini is then used only for background images and their vision QA.
+    claude_mode = (script_writer or s.script_writer) == "claude_code"
+    if claude_mode:
         llm = ClaudeCodeLLM(ledger, gemini, cli=s.claude_cli, model=s.claude_model,
                             model_map={s.model_script: s.claude_model_script,
-                                       s.model_script_fallback: s.claude_model_script},
+                                       s.model_script_fallback: s.claude_model_script,
+                                       s.model_text: s.claude_model,
+                                       s.model_cheap: s.claude_model_cheap},
                             effort_map={s.claude_model_script: s.claude_effort_script})
-    gemini_writer = GeminiScriptWriter(llm, model=s.model_script, check_model=s.model_cheap,
-                                       check_fallback=s.model_text, wpm=wpm or s.default_wpm_voice)
-    kind = script_writer or s.script_writer
-    use_cli_writer = kind == "claude_code" and s.text_llm != "claude_code"  # already Claude otherwise
-    writer = ClaudeCodeScriptWriter(gemini_writer, ledger, s.claude_cli) if use_cli_writer else gemini_writer
+    writer = GeminiScriptWriter(llm, model=s.model_script, check_model=s.model_cheap,
+                                check_fallback=s.model_text, wpm=wpm or s.default_wpm_voice)
     checker = GeminiOriginalityChecker(llm, embed_model=s.model_embed, judge_model=s.model_text,
                                        judge_fallback=s.model_script_fallback, shortlist_k=shortlist_k)
+    if claude_mode:
+        checker.embed_down = True  # Claude has no embeddings: the judge compares against the full source text
     return AI(settings=s, llm=llm, writer=writer, checker=checker,
               images=GeminiImageProvider(gemini, ledger, s.model_image),
               style_suffix=style_suffix or STYLE_SUFFIX)
