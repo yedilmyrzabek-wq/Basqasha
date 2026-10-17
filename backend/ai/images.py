@@ -53,7 +53,9 @@ class GeminiImageProvider:
         parts.append(f"{req.prompt.strip()} {req.style_suffix.strip()}{refs}")
         cfg = types.GenerateContentConfig(
             response_modalities=["IMAGE"],
-            image_config=types.ImageConfig(aspect_ratio=req.aspect_ratio, image_size=req.image_size))
+            image_config=types.ImageConfig(aspect_ratio=req.aspect_ratio, image_size=req.image_size),
+            # thinking tokens are billed (~$30 / 1M); a background needs none (tools_costs research)
+            thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel.MINIMAL))
         resp = None
         for attempt in range(2):  # one retry on 5xx only
             try:
@@ -150,12 +152,12 @@ def generate_background(provider: GeminiImageProvider, llm: ILLM, prompt: str, o
             result["qa_status"] = "ok"
             notes.append(f"attempt {attempt}: ok")
             break
-        problems = [k for k, bad in (("text/letters", qa.has_text), ("people", qa.has_people),
+        problems = [k for k, bad in (("text/letters", qa.has_text), ("photoreal/real person/kalpak figure", qa.has_people),
                                      ("style mismatch", not qa.style_match), ("photoreal", qa.is_photoreal)) if bad]
         notes.append(f"attempt {attempt}: {', '.join(problems)} — {qa.notes}")
         result["qa_status"] = "failed"
         extra = (f" IMPORTANT: the previous image had {', '.join(problems)} ({qa.notes}). "
-                 "Absolutely no text, letters, numbers or people.")
+                 "Absolutely no text, letters or numbers; people only in the same cartoon style.")
     result["qa_notes"] = " | ".join(notes)
     if result["path"] is not None:
         result["path"] = Path(result["path"])

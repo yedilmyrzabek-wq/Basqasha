@@ -627,7 +627,7 @@ export interface components {
             errors?: string[];
         };
         /** @enum {string} */
-        StepKey: "source" | "idea" | "facts" | "script" | "voice" | "storyboard" | "images" | "preview" | "render" | "metadata";
+        StepKey: "source" | "idea" | "facts" | "script" | "voice" | "storyboard" | "images" | "preview" | "render" | "metadata" | "recommendations";
         StepState: {
             step: components["schemas"]["StepKey"];
             /** @enum {string} */

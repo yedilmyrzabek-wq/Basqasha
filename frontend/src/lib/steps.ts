@@ -3,15 +3,16 @@ import type { Project, ProjectDetail, StepKey, StepState, StepStatus, WaitReason
 
 export const STEPS: { key: StepKey; title: string; hint: string }[] = [
   { key: 'source', title: 'Источник', hint: 'Транскрипт и метаданные видео' },
-  { key: 'idea', title: 'Идея', hint: 'Бриф и 3 варианта для Казахстана' },
+  { key: 'idea', title: 'Идея', hint: 'Идея присланного видео (выбирается сама)' },
   { key: 'facts', title: 'Факты', hint: 'Поиск и проверка фактов' },
   { key: 'script', title: 'Сценарий', hint: 'Казахский текст + проверка похожести' },
   { key: 'voice', title: 'Озвучка', hint: 'Текст для ElevenLabs → mp3' },
   { key: 'storyboard', title: 'Раскадровка', hint: 'Сцены по ~5 с' },
-  { key: 'images', title: 'Картинки', hint: '12–15 фонов + автопроверка' },
+  { key: 'images', title: 'Картинки', hint: 'Фоны: Gemini или вручную (Google Flow)' },
   { key: 'preview', title: 'Превью', hint: 'Лист кадров и комментарии' },
   { key: 'render', title: 'Рендер', hint: 'Финальный MP4 + Shorts' },
-  { key: 'metadata', title: 'Метаданные', hint: 'Заголовки, описание, теги' },
+  { key: 'metadata', title: 'Метаданные', hint: 'Заголовки, описание, теги, обложка' },
+  { key: 'recommendations', title: 'Рекомендации', hint: 'Чего не хватило и что добавить' },
 ]
 
 export const STEP_STATUS: Record<StepStatus, { label: string; tone: BadgeTone }> = {

@@ -13,22 +13,11 @@ from app.pipeline.media_state import aligned_track, current_storyboard, selected
 from app.pipeline.orchestrator import DONE, StepResult, job_log, register
 from app.providers.interfaces import CallContext
 from app.schemas import errors as schema_errors
-from app.config import get_settings
+from app.media import library
 from app.sources import SourceRepository, youtube
 from app.storage import project_dir, rel, write_text
 
 PAID_PLANS = ("starter", "creator", "pro")
-
-
-def character_block() -> str:
-    """The shared character description from library/character/PROMPTS.md (first code block after
-    «Общий блок»), so thumbnail prompts keep our kalpak stickman."""
-    f = get_settings().library_path / "character" / "PROMPTS.md"
-    try:
-        text = f.read_text(encoding="utf-8")
-        return text.split("Общий блок", 1)[1].split("```", 2)[1].strip()
-    except (OSError, IndexError):
-        return ""
 
 
 def source_thumbnail(project_id: uuid.UUID, video_id: str | None):
@@ -105,7 +94,7 @@ def run(project_id: uuid.UUID) -> StepResult:
                          ai_disclosure=chk["ai_disclosure"], paid_promotion=chk["paid_promotion"],
                          voice_plan_paid=chk.get("voice_plan_paid"),
                          reference=reference, source_title=src_title or "", source_views=src_views,
-                         source_thumb=thumb, character_block=character_block()))
+                         source_thumb=thumb, character_block=library.character_block()))
     if thumb:
         m["source_thumbnail"] = rel(thumb)
     m["checklist"] = {**m.get("checklist", {}), **chk}

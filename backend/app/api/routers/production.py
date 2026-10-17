@@ -17,7 +17,7 @@ from app.media import library, storyboard_rules
 from app.models import Metadata, Render, SceneComment, Storyboard, VoiceTrack
 from app.pipeline import orchestrator
 from app.pipeline.media_state import aligned_track, current_storyboard, selected_images
-from app.pipeline.steps import s06_storyboard, s07_images, s10_metadata
+from app.pipeline.steps import s06_storyboard, s07_images, s10_metadata, s11_recommendations
 from app.pipeline.steps.s08_preview import scene_times
 from app.schemas import errors as schema_errors
 from app.storage import file_url
@@ -257,3 +257,26 @@ def save_metadata(project_id: uuid.UUID, body: dict[str, Any] = Body(...), db: S
     orchestrator.job_log(db, project_id, "metadata", "Metadata edited by the operator")
     return body
 
+
+
+# ------------------------------------------------------------------ recommendations (step 11)
+@router.get("/recommendations", tags=["content"])
+def get_recommendations(project_id: uuid.UUID, db: Session = Depends(get_read_db)):
+    get_project(db, project_id)
+    doc = s11_recommendations.load(project_id)
+    if doc is None:
+        raise HTTPException(404, "No recommendations yet")
+    return doc
+
+
+@router.patch("/recommendations/{index}", tags=["content"])
+def mark_recommendation(project_id: uuid.UUID, index: int, body: dict[str, Any] = Body(...),
+                        db: Session = Depends(get_db)):
+    """{"done": true|false} — the operator ticks off what they added."""
+    get_project(db, project_id)
+    doc = s11_recommendations.load(project_id)
+    if doc is None or not 0 <= index < len(doc["items"]):
+        raise HTTPException(404, "No such recommendation")
+    doc["items"][index]["done"] = bool(body.get("done"))
+    s11_recommendations.save(project_id, doc)
+    return doc

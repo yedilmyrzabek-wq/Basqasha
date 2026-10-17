@@ -709,7 +709,7 @@ components:
 
     StepKey:
       type: string
-      enum: [source, idea, facts, script, voice, storyboard, images, preview, render, metadata]
+      enum: [source, idea, facts, script, voice, storyboard, images, preview, render, metadata, recommendations]
 
     StepState:
       type: object

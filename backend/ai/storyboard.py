@@ -39,8 +39,40 @@ TEXT_SLOTS = [(820, 130), (1300, 130), (820, 270)]
 STAMP_XY, NOTE_XY = (1480, 640), (1520, 270)
 ARROW = (980, 400, 600, 560)
 COINS = (1500, 180, 400, 720)
-HOOK_POSES = ("shock", "think")
-FILLER_POSES = ("point", "think", "shrug", "present")
+# Poses are chosen by TAGS (poses.json), so any character library works.
+HOOK_TAGS = ("shock", "surprise", "question", "curious", "think")   # scene 1
+FILLER_TAGS = ("explain", "point", "think", "shrug", "teach")       # extra pose change to keep motion
+DEFAULT_TAGS = ("explain", "neutral", "default")
+
+
+def poses_with(poses: list[dict], tags: Sequence[str]) -> list[str]:
+    """Pose names that carry one of ``tags``, in tag order."""
+    out: list[str] = []
+    for t in tags:
+        out += [p["name"] for p in poses if t in p.get("tags", []) and p["name"] not in out]
+    return out
+
+
+def max_pose_uses(n_scenes: int) -> int:
+    """No pose in more than ~1/8 of the scenes (owner feedback: think_chin was in 14 of 47)."""
+    return max(3, math.ceil(n_scenes / 8))
+
+
+def spread_poses(chosen: list[str], poses: list[dict], limit: int) -> list[str]:
+    """Replace over-used poses (beyond ``limit``) by the least used pose that shares a tag."""
+    tags = {p["name"]: set(p.get("tags", [])) for p in poses}
+    used = Counter(chosen)
+    out = list(chosen)
+    for i, name in enumerate(out):
+        if used[name] <= limit:
+            continue
+        alt = sorted((n for n in tags if n != name and tags[n] & tags.get(name, set()) and used[n] < limit),
+                     key=lambda n: used[n])
+        if alt:
+            used[name] -= 1
+            used[alt[0]] += 1
+            out[i] = alt[0]
+    return out
 _CLAUSE_END = re.compile(r"[,;:—–]$")
 _SENT_END = re.compile(r"[.!?…]$")
 
@@ -279,7 +311,8 @@ def _plan(llm: ILLM, model: str, ctx: CallContext, *, language: str, title: str,
                       scenes_text=_scene_lines(tl, ranges, beats),
                       poses_json=json.dumps([{"name": x["name"], "tags": x.get("tags", [])} for x in poses],
                                             ensure_ascii=False),
-                      hook_poses=" or ".join(x for x in HOOK_POSES if x in {q["name"] for q in poses}) or poses[0]["name"],
+                      hook_poses=" or ".join(poses_with(poses, HOOK_TAGS)[:4]) or poses[0]["name"],
+                      max_pose_uses=str(max_pose_uses(len(ranges))),
                       operator_comments=operator_comments or "")
     problems = ""
     for attempt in range(2):  # 1 repair
@@ -408,7 +441,7 @@ def _pose_at(scene: dict, word: int) -> str:
     return pose
 
 
-def _add_filler(scene: dict, word: int, pose_names: set[str]) -> bool:
+def _add_filler(scene: dict, word: int, fillers: list[str]) -> bool:
     """Add one visual event at ``word``: punch-in first, then a pose change."""
     cam, ch = scene["camera"], scene["character"]
     if cam.get("punch_at_word") is None:
@@ -418,7 +451,7 @@ def _add_filler(scene: dict, word: int, pose_names: set[str]) -> bool:
     if len(pcs) >= 4 or any(p["at_word"] == word for p in pcs):
         return False
     cur = _pose_at(scene, word)
-    pose = next((p for p in FILLER_POSES if p in pose_names and p != cur), None)
+    pose = next((p for p in fillers if p != cur), None)
     if pose is None:
         return False
     pcs.append({"at_word": word, "pose": pose})
@@ -426,7 +459,7 @@ def _add_filler(scene: dict, word: int, pose_names: set[str]) -> bool:
     return True
 
 
-def _fix_events(scene: dict, tl: _Timeline, pose_names: set[str]) -> None:
+def _fix_events(scene: dict, tl: _Timeline, fillers: list[str]) -> None:
     """>= 2 events, first <= 0.6 s after the scene start, gaps <= 3 s (video_craft R8)."""
     a, b = scene["start_word"], scene["end_word"]
     st, en = tl.start(a), tl.end(b)
@@ -437,7 +470,7 @@ def _fix_events(scene: dict, tl: _Timeline, pose_names: set[str]) -> None:
             movable[0]["at_word"] = a
         else:
             early = next((i for i in range(a + 1, b + 1) if tl.t(i) - st <= FIRST_EVENT), a)
-            _add_filler(scene, early, pose_names)
+            _add_filler(scene, early, fillers)
     for _ in range(6):
         ev = _events(scene)
         times = [st] + [tl.t(i) for i in ev] + [en + FIRST_EVENT]
@@ -448,7 +481,7 @@ def _fix_events(scene: dict, tl: _Timeline, pose_names: set[str]) -> None:
         lo, hi = times[big[1]], times[big[1] + 1]
         mid = (lo + hi) / 2
         cand = [i for i in range(a + 1, b + 1) if i not in ev]
-        if not cand or not _add_filler(scene, min(cand, key=lambda i: abs(tl.t(i) - mid)), pose_names):
+        if not cand or not _add_filler(scene, min(cand, key=lambda i: abs(tl.t(i) - mid)), fillers):
             break
 
 
@@ -518,7 +551,9 @@ def build_storyboard(llm: ILLM, model: str, script_doc: Mapping[str, Any], words
                      operator_comments: str | None = None, n_backgrounds: int = 30) -> dict[str, Any]:
     tl = _Timeline(words_doc)
     pose_names = {p["name"] for p in poses}
-    default_pose = next((p for p in ("point", "present") if p in pose_names), poses[0]["name"])
+    default_pose = (poses_with(poses, DEFAULT_TAGS) or [poses[0]["name"]])[0]
+    hook_poses = poses_with(poses, HOOK_TAGS)
+    fillers = poses_with(poses, FILLER_TAGS)
     n_scenes = scene_count(tl.duration)
     beats = beat_of_words(script_doc, tl.n)
     ranges = split_scenes(tl, n_scenes, beats)
@@ -537,8 +572,9 @@ def build_storyboard(llm: ILLM, model: str, script_doc: Mapping[str, Any], words
         assign.append(bg or (assign[-1] if assign else next(iter(bg_prompt))))
         pose = ps.pose if ps and ps.pose in pose_names else default_pose
         poses_out.append(pose)
-    if poses_out[0] not in HOOK_POSES:
-        poses_out[0] = next((p for p in HOOK_POSES if p in pose_names), poses_out[0])
+    poses_out = spread_poses(poses_out, poses, max_pose_uses(len(poses_out)))
+    if hook_poses and poses_out[0] not in hook_poses:
+        poses_out[0] = hook_poses[0]
     assign, _ = balance_backgrounds(assign, list(bg_prompt), bg_min_uses(len(ranges), n_bg))
 
     # renumber backgrounds bg01.. in order of first use
@@ -587,7 +623,7 @@ def build_storyboard(llm: ILLM, model: str, script_doc: Mapping[str, Any], words
             caps.append({"start_word": s, "end_word": e, "keyword": _keyword(tl, s, e, pick)})
         sc["captions"] = caps
         sc["caption_keyword"] = caps[0]["keyword"]
-        _fix_events(sc, tl, pose_names)
+        _fix_events(sc, tl, fillers)
         if not ch["pose_changes"]:
             del ch["pose_changes"]
 

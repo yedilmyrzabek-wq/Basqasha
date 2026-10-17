@@ -14,6 +14,7 @@ from ai.gemini import GeminiLLM
 from ai.idea import generate_idea
 from ai.images import GeminiImageProvider, generate_background
 from ai.metadata import build_metadata
+from ai.recommendations import build_recommendations
 from ai.originality import OriginalityChecker, run_originality
 from ai.script import ScriptWriter
 from ai.storyboard import build_storyboard
@@ -87,6 +88,10 @@ class AI:
                               language=language, ctx=ctx, words_doc=words_doc, ai_disclosure=ai_disclosure,
                               paid_promotion=paid_promotion, voice_plan_paid=voice_plan_paid,
                               reference=reference, **source)
+
+    def recommendations(self, context: Mapping[str, Any], *, ctx: CallContext) -> dict[str, Any]:
+        """Step 11: what was missing for this video and how to add it (1 LLM call)."""
+        return build_recommendations(self.llm, self.settings.model_text, context, ctx=ctx)
 
 
 def build_ai(ledger: ICostLedger, settings: Settings | None = None, *, wpm: float | None = None,

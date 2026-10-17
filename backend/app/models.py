@@ -17,7 +17,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db import Base
 
 STEP_KEYS = ("source", "idea", "facts", "script", "voice",
-             "storyboard", "images", "preview", "render", "metadata")
+             "storyboard", "images", "preview", "render", "metadata", "recommendations")
 
 LanguageE = ENUM("kk", "ru", "en", name="language_code", create_type=False)
 StepKeyE = ENUM(*STEP_KEYS, name="step_key", create_type=False)

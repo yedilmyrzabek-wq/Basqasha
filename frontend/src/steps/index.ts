@@ -5,6 +5,7 @@ import IdeaStep from './IdeaStep'
 import ImagesStep from './ImagesStep'
 import MetadataStep from './MetadataStep'
 import PreviewStep from './PreviewStep'
+import RecommendationsStep from './RecommendationsStep'
 import RenderStep from './RenderStep'
 import ScriptStep from './ScriptStep'
 import SourceStep from './SourceStep'
@@ -23,4 +24,5 @@ export const STEP_VIEWS: Record<StepKey, ComponentType<StepViewProps>> = {
   preview: PreviewStep,
   render: RenderStep,
   metadata: MetadataStep,
+  recommendations: RecommendationsStep,
 }
