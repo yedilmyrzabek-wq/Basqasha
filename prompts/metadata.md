@@ -1,17 +1,17 @@
 ---
 id: metadata
-version: 2
+version: 3
 model: MODEL_TEXT
 schema: schemas/metadata.schema.json (LLM output = backend/ai/schemas.py:MetadataOut; chapters timing, sources, checklist and the final description are assembled in code)
 inputs: [language_name, script_title, script_text, facts_json, beats_json, source_title, source_views, thumb_note, character_block, repair_note]
-changelog: v2 — packaging like the competitor (owner 2026-10-18): analyse the source video's title + thumbnail, title 1 adapts its proven hook, simple spoken words instead of "literary" titles; 3 thumbnail prompts for Google Flow with our character. v1 — titles/description/chapters/thumbnail texts (video_craft R15-R17, kazakh_market R14, monetization R8, R12)
+changelog: v3 — thumbnail: take the competitor's PRINCIPLES, never its picture (owner 2026-10-18: prompt 1 was a near copy of «NO JOBS»); 3 different own concepts. v2 — packaging like the competitor (owner 2026-10-18): analyse the source video's title + thumbnail, title 1 adapts its proven hook, simple spoken words instead of "literary" titles; 3 thumbnail prompts for Google Flow with our character. v1 — titles/description/chapters/thumbnail texts (video_craft R15-R17, kazakh_market R14, monetization R8, R12)
 ---
 You write YouTube metadata in {{language_name}} for an animated stickman explainer video (general audience 13+, NOT made for kids). Our video retells, in our own words and pictures, the idea of a viral English video (the "source"). The source's PACKAGING (title + thumbnail) is already proven by millions of views — learn from it like a competitor analyst. All output text is in {{language_name}} except packaging_notes (RUSSIAN), thumbnail_prompts (ENGLISH) and tags (may include common English search terms).
 
 ## Step 1 — competitor packaging analysis (packaging_notes, RUSSIAN, 3-6 sentences)
 Source title: "{{source_title}}" ({{source_views}} views).
 {{thumb_note}}
-Explain to the operator why this packaging works: the hook type of the title (simple curiosity question / bold claim / number / "you" scene), how short and spoken it is, which emotion it promises; the thumbnail concept (who is shown, how big, what emotion, which 1-3 words, colours, contrast). Then say what our titles and thumbnail take from it.
+Explain to the operator why this packaging works: the hook type of the title (simple curiosity question / bold claim / number / "you" scene), how short and spoken it is, which emotion it promises; the thumbnail concept (who is shown, how big, what emotion, which 1-3 words, colours, contrast). Then say which PRINCIPLES we take (e.g. one huge emotion, 2 words, contrast with the viewer's life) — and how our thumbnail will be visibly different (own scene, own pose, own words).
 
 ## Step 2 — titles: exactly 5 variants
 - Titles must sound like a person talking, in simple everyday {{language_name}} words that a 13-year-old understands. Short and punchy (25-60 characters, aim 30-50). The hook in the first 40 characters.
@@ -31,8 +31,10 @@ Explain to the operator why this packaging works: the hook type of the title (si
 - tags: 8-15 search tags (topic words, key terms, names from the narration).
 
 ## Step 6 — thumbnail
-- thumbnail_texts: exactly 3 texts in {{language_name}}, each 1-3 words AND <= 18 characters, like "NO JOBS" on a winning thumbnail: huge, instantly readable, a strong emotion or contrast; must not repeat any title verbatim. Text 1 adapts the source thumbnail text if it has one.
-- thumbnail_prompts: exactly 3 ENGLISH prompts for Google Flow (image model), one per thumbnail text, in the same order. Each prompt describes a 16:9 YouTube thumbnail in the winning concept from Step 1, but with OUR character (insert the character block below verbatim): the character very large and close (head and upper body fill 40-60% of the frame, usually on one side), a strong readable facial emotion, a simple bright illustrated background that tells the topic in one glance (2-3 objects max), high contrast, thick outlines, flat colours. Put the thumbnail text in the prompt as huge bold yellow letters with a thick black outline, in quotes, exactly as written (Cyrillic). No other text, no logos, no real people. End with: "16:9, 1280x720, YouTube thumbnail, hand-drawn stickman cartoon style."
+Take the competitor's PRINCIPLES, never its picture. A thumbnail is an image work: copying its scene, pose, objects, layout or words (even translated) is plagiarism and makes our channel look like a copy.
+- thumbnail_texts: exactly 3 texts in {{language_name}}, each 1-3 words AND <= 18 characters: huge, instantly readable, a strong emotion or contrast; must not repeat any title verbatim and must NOT be a translation of the source thumbnail text — find our own angle (a surprising number from the narration, a question, a contrast with the viewer's own life).
+- thumbnail_prompts: exactly 3 ENGLISH prompts for Google Flow (image model), one per thumbnail text, in the same order. The 3 prompts are 3 DIFFERENT ideas of our own (e.g. a split-screen contrast "then vs now", one striking object with a reaction, the viewer's everyday problem shown through the mascot). Do NOT reuse the source thumbnail's pose, setting, props, colour scheme or layout (if the source shows a figure lying by a rock in a savanna, ours must not).
+- thumbnail_prompts: exactly 3 ENGLISH prompts for Google Flow (image model), one per thumbnail text, in the same order. Each prompt describes a 16:9 YouTube thumbnail with OUR character (insert the character block below verbatim), following the principles from Step 1: the character very large and close (head and upper body fill 40-60% of the frame, usually on one side), a strong readable facial emotion, a simple bright illustrated background that tells the topic in one glance (2-3 objects max), high contrast, thick outlines, flat colours. Put the thumbnail text in the prompt as huge bold yellow letters with a thick black outline, in quotes, exactly as written (Cyrillic). No other text, no logos, no real people. End with: "16:9, 1280x720, YouTube thumbnail, hand-drawn stickman cartoon style."
 
 Character block (insert verbatim into every thumbnail prompt):
 {{character_block}}

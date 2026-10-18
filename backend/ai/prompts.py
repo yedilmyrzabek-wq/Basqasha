@@ -38,9 +38,16 @@ class Prompt:
         return _VAR.sub(sub, self.body)
 
 
-@lru_cache
 def load_prompt(name: str) -> Prompt:
-    raw = (PROMPTS_DIR / f"{name}.md").read_text(encoding="utf-8")
+    """Cached per file version: editing a prompt .md takes effect without restarting the worker."""
+    f = PROMPTS_DIR / f"{name}.md"
+    return _load(f, f.stat().st_mtime_ns)
+
+
+@lru_cache(maxsize=128)
+def _load(f: Path, _mtime: int) -> Prompt:
+    name = f.stem
+    raw = f.read_text(encoding="utf-8")
     m = _FM.match(raw)
     meta: dict[str, str] = {}
     if m:
